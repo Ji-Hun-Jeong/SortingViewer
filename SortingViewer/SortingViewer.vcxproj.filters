@@ -8,6 +8,9 @@
     <Filter Include="Default">
       <UniqueIdentifier>{b379c711-8ea6-4146-acd5-1aadc5ba9b6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{8d3ddeb4-84d3-46b4-ad84-e3b521de0aa0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SortingViewer.h">
@@ -24,6 +27,16 @@
     </ClInclude>
     <ClInclude Include="Core.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Define.h" />
+    <ClInclude Include="CoreBase.h" />
+    <ClInclude Include="D3DUtils.h" />
+    <ClInclude Include="GraphicsCommons.h" />
+    <ClInclude Include="GraphicsPSO.h" />
+    <ClInclude Include="Enum.h" />
+    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="GeometryGenerator.h" />
+    <ClInclude Include="Struct.h" />
+    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SortingViewer.rc">
@@ -41,5 +54,25 @@
   <ItemGroup>
     <ClCompile Include="SortingViewer.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CoreBase.cpp" />
+    <ClCompile Include="D3DUtils.cpp" />
+    <ClCompile Include="GraphicsCommons.cpp" />
+    <ClCompile Include="GraphicsPSO.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="GeometryGenerator.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="BasicVertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="BasicPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Header.hlsli">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

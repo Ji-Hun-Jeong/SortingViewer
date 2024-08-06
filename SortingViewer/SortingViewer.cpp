@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "SortingViewer.h"
 #include "pch.h"
+#include "Core.h"
 
 #define MAX_LOADSTRING 100
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
@@ -18,7 +19,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-
+Core g_core;
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -53,12 +54,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 break;
             TranslateMessage(&msg);
             DispatchMessage(&msg);
-            static int a = 1;
-            cout << a++ << endl;
         }
         else
         {
-            
+            g_core.Progress();
         }
     }
 
@@ -108,16 +107,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
    RECT windowSize = { 0,0,1280,960 };
    AdjustWindowRect(&windowSize, WS_OVERLAPPEDWINDOW, true);
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-       100, 100, windowSize.right - windowSize.left, windowSize.bottom - windowSize.top, nullptr, nullptr, hInstance, nullptr);
+   UINT width = windowSize.right - windowSize.left;
+   UINT height = windowSize.bottom - windowSize.top;
+   g_hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+       100, 100, width, height, nullptr, nullptr, hInstance, nullptr);
    
-   if (!hWnd)
+   if (!g_hWnd)
    {
       return FALSE;
    }
-
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+   g_core.Init(g_hWnd, width, height);
+   ShowWindow(g_hWnd, nCmdShow);
+   UpdateWindow(g_hWnd);
 
    return TRUE;
 }
