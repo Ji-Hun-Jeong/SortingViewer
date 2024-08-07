@@ -20,9 +20,9 @@ void Mesh::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& conte
 
 	m_meshConstBuffer = make_shared<ConstBuffer>();
 	m_meshConstBuffer->Init(device, sizeof(m_meshConst), 1, &m_meshConst);
+	m_meshConstBuffer->Update(context, sizeof(m_meshConst), 1, &m_meshConst);
 
 	m_texture = make_shared<Texture2D>();
-	m_texture->ReadImage(device, context, "Image/Ground.png");
 }
 
 void Mesh::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
@@ -52,4 +52,10 @@ void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)
 	context->PSSetShaderResources(0, 1, m_texture->GetSRVAddress());
 
 	context->DrawIndexed(m_indexCount, 0, 0);
+}
+
+void Mesh::ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
+	, const string& filePath, bool useSRGB)
+{
+	m_texture->ReadImage(device, context, filePath, useSRGB);
 }

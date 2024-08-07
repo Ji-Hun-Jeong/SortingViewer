@@ -7,6 +7,7 @@
 #include <d3dcompiler.h>
 #include <directxmath.h>
 #include <directxtk/SimpleMath.h>
+#include <directxtk/DDSTextureLoader.h>
 #include <wrl.h>
 #include <iostream>
 #include <string>

@@ -9,14 +9,18 @@ namespace Graphics
 	ComPtr<ID3D11InputLayout> basicInputLayout;
 
 	ComPtr<ID3D11VertexShader> basicVS;
+	ComPtr<ID3D11VertexShader> skyBoxVS;
 
 	ComPtr<ID3D11PixelShader> basicPS;
+	ComPtr<ID3D11PixelShader> skyBoxPS;
 
 	ComPtr<ID3D11RasterizerState> solidCWRS;
+	ComPtr<ID3D11RasterizerState> solidCCWRS;
 
 	ComPtr<ID3D11DepthStencilState> basicDSS;
 
 	GraphicsPSO basicSolidPSO;
+	GraphicsPSO skyBoxSolidPSO;
 
 	void InitCommons(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)
 	{
@@ -49,8 +53,10 @@ namespace Graphics
 			{"COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA , 0 }
 		};
 		D3DUtils::CreateVertexShaderAndInputLayout(device, L"Basic", basicVS, desc, basicInputLayout);
+		D3DUtils::CreateVertexShaderAndInputLayout(device, L"SkyBox", skyBoxVS, desc, basicInputLayout);
 
 		D3DUtils::CreatePixelShader(device, L"Basic", basicPS);
+		D3DUtils::CreatePixelShader(device, L"SkyBox", skyBoxPS);
 	}
 	void InitRasterizerState(ComPtr<ID3D11Device>& device)
 	{
@@ -62,7 +68,10 @@ namespace Graphics
 		desc.DepthClipEnable = true;
 		desc.MultisampleEnable = true;
 
-		device->CreateRasterizerState(&desc, solidCWRS.GetAddressOf());
+		CHECKRESULT(device->CreateRasterizerState(&desc, solidCWRS.GetAddressOf()));
+
+		desc.FrontCounterClockwise = true;
+		CHECKRESULT(device->CreateRasterizerState(&desc, solidCCWRS.GetAddressOf()))
 	}
 	void InitDepthStencilState(ComPtr<ID3D11Device>& device)
 	{
@@ -85,7 +94,7 @@ namespace Graphics
 		desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
 		desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-		device->CreateDepthStencilState(&desc, basicDSS.GetAddressOf());
+		CHECKRESULT(device->CreateDepthStencilState(&desc, basicDSS.GetAddressOf()));
 	}
 	void InitPSO()
 	{
@@ -94,5 +103,10 @@ namespace Graphics
 		basicSolidPSO.SetPS(basicPS);
 		basicSolidPSO.SetRS(solidCWRS);
 		basicSolidPSO.SetDSS(basicDSS);
+
+		skyBoxSolidPSO = basicSolidPSO;
+		skyBoxSolidPSO.SetVS(skyBoxVS);
+		skyBoxSolidPSO.SetPS(skyBoxPS);
+		skyBoxSolidPSO.SetRS(solidCCWRS);
 	}
 }

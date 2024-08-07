@@ -11,6 +11,8 @@ public:
 	void ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
 		, const string& filePath, bool useSRGB = false);
 
+	void ReadDDSImage(ComPtr<ID3D11Device>& device, const wstring& filePath);
+
 	void CreateView(ComPtr<ID3D11Device>& device, UINT viewType);
 
 	void CreateStagingTexture(ComPtr<ID3D11Device>& device, UINT width, UINT height

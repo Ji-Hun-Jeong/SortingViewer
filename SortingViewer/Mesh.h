@@ -10,6 +10,8 @@ public:
 		, const MeshData& meshData);
 	void Update(ComPtr<ID3D11DeviceContext>& context, float dt);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
+	void ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
+		, const string& filePath, bool useSRGB = false);
 
 	Vector3& GetTrans() { return m_translation; }
 	Vector3& GetRotation() { return m_rotation; }

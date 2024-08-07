@@ -22,3 +22,6 @@ cbuffer GlobalConst : register(b0)
 };
 
 SamplerState g_linearSampler : register(s0);
+TextureCube g_specularCube : register(t10);
+TextureCube g_irradianceCube : register(t11);
+Texture2D g_brdfTexture : register(t12);

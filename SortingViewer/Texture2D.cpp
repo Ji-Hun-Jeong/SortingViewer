@@ -79,6 +79,20 @@ void Texture2D::ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceConte
 	context->GenerateMips(m_srv.Get());
 }
 
+void Texture2D::ReadDDSImage(ComPtr<ID3D11Device>& device, const wstring& filePath)
+{
+	CHECKRESULT(DirectX::CreateDDSTextureFromFileEx(device.Get(), filePath.c_str(), 0
+		, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0
+		, D3D11_RESOURCE_MISC_TEXTURECUBE, DirectX::DDS_LOADER_FLAGS(false)
+		, (ID3D11Resource**)m_texture.GetAddressOf()
+		, m_srv.GetAddressOf(), nullptr));
+
+	D3D11_TEXTURE2D_DESC desc;
+	m_texture->GetDesc(&desc);
+	m_width = desc.Width;
+	m_height = desc.Height;
+}
+
 void Texture2D::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11Texture2D>& texture, UINT viewType)
 {
 	m_texture = texture;

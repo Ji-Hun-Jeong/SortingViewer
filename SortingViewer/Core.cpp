@@ -23,6 +23,12 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_mesh->GetScale() = Vector3(0.3f);
 	m_mesh->GetRotation().z = 90 * XM_PI / 180.0f;
 	m_mesh->Init(m_device, m_context, triangle);
+	m_mesh->ReadImage(m_device, m_context, "Image/Ground.png", false);
+
+	MeshData sphere = GeometryGenerator::MakeSphere(1.0f, 30, 30);
+	m_skyBox = make_shared<Mesh>();
+	m_skyBox->GetScale() = Vector3(30.0f);
+	m_skyBox->Init(m_device, m_context, sphere);
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.01f, 100.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
@@ -30,11 +36,23 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_globalConstBuffer = make_shared<ConstBuffer>();
 	m_globalConstBuffer->Init(m_device, sizeof(m_globalConst), 1, &m_globalConst);
 
+	m_arrIBL[(UINT)IBL_TYPE::SPECULAR].ReadDDSImage(m_device, L"Image/SkyBox/SunSetSpecularHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].ReadDDSImage(m_device, L"Image/SkyBox/SunSetDiffuseHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::LUT].ReadDDSImage(m_device, L"Image/SkyBox/SunSetBrdf.dds");
+
 	m_context->VSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 	m_context->PSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 
 	m_context->VSSetConstantBuffers(0, 1, m_globalConstBuffer->GetBufferAddress());
 	m_context->PSSetConstantBuffers(0, 1, m_globalConstBuffer->GetBufferAddress());
+
+	vector<ID3D11ShaderResourceView*> arrSRV =
+	{
+		m_arrIBL[(UINT)IBL_TYPE::SPECULAR].GetSRV(),
+		m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].GetSRV(),
+		m_arrIBL[(UINT)IBL_TYPE::LUT].GetSRV()
+	};
+	m_context->PSSetShaderResources(10, 1, arrSRV.data());
 }
 
 void Core::Update()
@@ -47,6 +65,7 @@ void Core::Update()
 	UpdateGlobalConst();
 
 	m_mesh->Update(m_context, dt);
+	m_skyBox->Update(m_context, dt);
 }
 
 void Core::Render()
@@ -61,6 +80,9 @@ void Core::Render()
 	CoreBase::SetPSO(Graphics::basicSolidPSO);
 
 	m_mesh->Render(m_context);
+
+	CoreBase::SetPSO(Graphics::skyBoxSolidPSO);
+	m_skyBox->Render(m_context);
 
 	m_context->ResolveSubresource(m_resolveBuffer.GetTexture(), 0, m_msaaBuffer.GetTexture()
 		, 0, DXGI_FORMAT_R16G16B16A16_FLOAT);

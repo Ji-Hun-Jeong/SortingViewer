@@ -13,3 +13,10 @@ enum class KEY_STATE
 	AWAY,
 	HOLD,
 };
+enum class IBL_TYPE
+{
+	SPECULAR,
+	IRRADIANCE,
+	LUT,
+	END,
+};
