@@ -85,4 +85,3 @@ void D3DUtils::UpdateStagingBuffer(ComPtr<ID3D11DeviceContext>& context, UINT el
 		memcpy(ms.pData, pData, elementSize);
 	context->Unmap(stagingBuffer.Get(), 0);
 }
-
