@@ -1,11 +1,13 @@
 #pragma once
 class ConstBuffer;
+class Texture2D;
 class Mesh
 {
 public:
 	explicit Mesh();
 public:
-	void Init(ComPtr<ID3D11Device>& device, const MeshData& meshData);
+	void Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
+		, const MeshData& meshData);
 	void Update(ComPtr<ID3D11DeviceContext>& context);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
 
@@ -20,6 +22,8 @@ protected:
 
 	MeshConst m_constData;
 	shared_ptr<ConstBuffer> m_constBuffer;
+
+	shared_ptr<Texture2D> m_texture;
 
 	Vector3 m_translation;
 	Vector3 m_rotation;

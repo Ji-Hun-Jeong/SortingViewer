@@ -1,4 +1,5 @@
 #pragma once
+class Texture2D;
 class D3DUtils
 {
 public:
@@ -22,6 +23,8 @@ public:
 
 	static void UpdateStagingBuffer(ComPtr<ID3D11DeviceContext>& context, UINT elementSize
 		, UINT numElement, void* pData, ComPtr<ID3D11Buffer>& stagingBuffer);
+
+	
 };
 
 template<typename T_Vertex>

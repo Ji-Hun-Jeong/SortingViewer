@@ -20,3 +20,5 @@ cbuffer GlobalConst : register(b0)
     matrix view;
     matrix proj;
 };
+
+SamplerState g_linearSampler : register(s0);
