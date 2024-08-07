@@ -26,4 +26,5 @@ using Microsoft::WRL::ComPtr;
 using std::vector;
 using std::shared_ptr;
 using std::make_shared;
+using DirectX::XM_PI;
 #include "Struct.h"

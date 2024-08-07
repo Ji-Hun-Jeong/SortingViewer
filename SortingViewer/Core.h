@@ -15,5 +15,6 @@ public:
 
 private:
 	shared_ptr<Mesh> m_mesh;
+	GlobalConst m_globalConst;
 };
 

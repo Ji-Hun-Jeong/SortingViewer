@@ -14,3 +14,9 @@ struct PSInput
     float2 uv : TEXCOORD;
     float3 color : COLOR;
 };
+
+cbuffer GlobalConst : register(b0)
+{
+    matrix view;
+    matrix proj;
+};

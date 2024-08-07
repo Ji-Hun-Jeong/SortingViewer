@@ -11,6 +11,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{8d3ddeb4-84d3-46b4-ad84-e3b521de0aa0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{42590264-d621-4abd-bd22-1671a92ec96d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SortingViewer.h">
@@ -37,6 +40,12 @@
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Buffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstBuffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SortingViewer.rc">
@@ -61,6 +70,12 @@
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstBuffer.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVertexShader.hlsl">

@@ -133,6 +133,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Buffer.h" />
+    <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="CoreBase.h" />
     <ClInclude Include="D3DUtils.h" />
@@ -151,6 +153,8 @@
     <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CoreBase.cpp" />
     <ClCompile Include="D3DUtils.cpp" />

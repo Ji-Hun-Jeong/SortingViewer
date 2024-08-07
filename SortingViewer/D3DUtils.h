@@ -13,6 +13,15 @@ public:
 	template <typename T_Int>
 	static void CreateIndexBuffer(ComPtr<ID3D11Device>& device, const vector<T_Int>& indices
 		, ComPtr<ID3D11Buffer>& indexBuffer);
+
+	static void CreateConstBuffer(ComPtr<ID3D11Device>& device
+		, UINT elementSize, ComPtr<ID3D11Buffer>& constBuffer);
+
+	static void CreateStagingBuffer(ComPtr<ID3D11Device>& device, UINT elementSize
+		, UINT numElement, void* initData, ComPtr<ID3D11Buffer>& stagingBuffer);
+
+	static void UpdateStagingBuffer(ComPtr<ID3D11DeviceContext>& context, UINT elementSize
+		, UINT numElement, void* pData, ComPtr<ID3D11Buffer>& stagingBuffer);
 };
 
 template<typename T_Vertex>

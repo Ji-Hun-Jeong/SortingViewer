@@ -14,14 +14,16 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	CoreBase::Init(hWnd, width, height);
 	Graphics::InitCommons(m_device, m_context);
 
-	MeshData triangle = GeometryGenerator::MakeTriangle();
+	MeshData triangle = GeometryGenerator::MakeSquare();
 	m_mesh = make_shared<Mesh>();
+	m_mesh->GetScale() = Vector3(0.3f);
+	m_mesh->GetRotation().z = 90 * XM_PI / 180.0f;
 	m_mesh->Init(m_device, triangle);
 }
 
 void Core::Update()
 {
-	
+	m_mesh->Update(m_context);
 }
 
 void Core::Render()
