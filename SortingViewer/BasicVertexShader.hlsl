@@ -6,9 +6,14 @@ cbuffer MeshConst : register(b1)
 PSInput main(VSInput input) 
 {
     PSInput output;
-    output.posWorld = float4(input.pos, 1.0f);
-    output.posWorld = mul(output.posWorld, world);
-    output.posProj = output.posWorld;
+    float4 pos = float4(input.pos, 1.0f);
+    pos = mul(pos, world);
+    output.posWorld = pos;
+    
+    pos = mul(pos, view);
+    pos = mul(pos, proj);
+    output.posProj = pos;
+    
     output.normal = input.normal;
     output.uv = input.uv;
     output.color = input.color;

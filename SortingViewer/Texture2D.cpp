@@ -71,7 +71,7 @@ void Texture2D::ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceConte
 	CHECKRESULT(device->CreateTexture2D(&desc, nullptr, m_texture.GetAddressOf()));
 
 	// texture를 밉맵으로 설정해두었기 때문에 copyresource는 안됌
-	context->CopySubresourceRegion(m_texture.Get(), 0, 0, 0, 0, m_stagingTexture.Get(), 1, 0);
+	context->CopySubresourceRegion(m_texture.Get(), 0, 0, 0, 0, m_stagingTexture.Get(), 0, 0);
 	//context->CopyResource(m_texture.Get(), m_stagingTexture.Get());
 
 	this->CreateView(device, VIEW_SRV);

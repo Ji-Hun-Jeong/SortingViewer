@@ -8,7 +8,7 @@ public:
 public:
 	void Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
 		, const MeshData& meshData);
-	void Update(ComPtr<ID3D11DeviceContext>& context);
+	void Update(ComPtr<ID3D11DeviceContext>& context, float dt);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
 
 	Vector3& GetTrans() { return m_translation; }
@@ -20,8 +20,8 @@ protected:
 	ComPtr<ID3D11Buffer> m_indexBuffer;
 	UINT m_indexCount = 0;
 
-	MeshConst m_constData;
-	shared_ptr<ConstBuffer> m_constBuffer;
+	MeshConst m_meshConst;
+	shared_ptr<ConstBuffer> m_meshConstBuffer;
 
 	shared_ptr<Texture2D> m_texture;
 

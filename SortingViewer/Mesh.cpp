@@ -18,24 +18,26 @@ void Mesh::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& conte
 
 	m_indexCount = meshData.indices.size();
 
-	m_constBuffer = make_shared<ConstBuffer>();
-	m_constBuffer->Init(device, sizeof(m_constData), 1, &m_constData);
+	m_meshConstBuffer = make_shared<ConstBuffer>();
+	m_meshConstBuffer->Init(device, sizeof(m_meshConst), 1, &m_meshConst);
 
 	m_texture = make_shared<Texture2D>();
 	m_texture->ReadImage(device, context, "Image/Ground.png");
 }
 
-void Mesh::Update(ComPtr<ID3D11DeviceContext>& context)
+void Mesh::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
-	m_constData.world =
+	static float time = 0.0f;
+	time += 0.01f;
+	m_meshConst.world =
 		Matrix::CreateScale(m_scale)
 		* Matrix::CreateRotationX(m_rotation.x)
 		* Matrix::CreateRotationY(m_rotation.y)
-		* Matrix::CreateRotationZ(m_rotation.z)
+		* Matrix::CreateRotationZ(m_rotation.z * time)
 		* Matrix::CreateTranslation(m_translation);
-	m_constData.world = m_constData.world.Transpose();
+	m_meshConst.world = m_meshConst.world.Transpose();
 
-	m_constBuffer->Update(context, sizeof(m_constData), 1, &m_constData);
+	m_meshConstBuffer->Update(context, sizeof(m_meshConst), 1, &m_meshConst);
 }
 
 void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)
@@ -45,7 +47,7 @@ void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)
 	context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
 	context->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0);
 
-	context->VSSetConstantBuffers(1, 1, m_constBuffer->GetBufferAddress());
+	context->VSSetConstantBuffers(1, 1, m_meshConstBuffer->GetBufferAddress());
 
 	context->PSSetShaderResources(0, 1, m_texture->GetSRVAddress());
 

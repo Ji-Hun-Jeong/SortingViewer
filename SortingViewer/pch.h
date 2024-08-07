@@ -16,7 +16,6 @@
 #include "Define.h"
 #include "Enum.h"
 
-
 using std::cout;
 using std::endl;
 using std::string;
