@@ -58,13 +58,21 @@ void Core::Update()
 	static const float dt = 0.01f;
 	KeyMgr::Update();
 
-	m_camera->Update(0.01f);
+	if (KEYCHECK(ESC, TAP))
+	{
+		m_sorter.reset();
+		exit(0);
+	}
+
+	m_camera->Update(dt);
 
 	UpdateGlobalConst();
 
 	if (KEYCHECK(SPACE, TAP))
 		m_sorter->GenerateRandomElements(m_device, m_context);
+
 	m_sorter->Update(m_context, dt);
+
 	m_skyBox->Update(m_context, dt);
 }
 

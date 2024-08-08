@@ -13,6 +13,13 @@ void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& con
 void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	, ComPtr<ID3D11DeviceContext>& context)
 {
+	if (m_sortAlgorithm)
+	{
+		m_sortAlgorithm->Destroy();
+		m_permitSortUpdate = false;
+	}
+
+
 	m_vecMeshes.clear();
 	random_device rd;
 	mt19937 gen(rd());
@@ -27,7 +34,7 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 		auto& mesh = m_vecMeshes[i];
 		mesh = make_shared<Mesh>();
 		mesh->GetScale() = Vector3(xzScale, randomHeight(gen), xzScale);
-		mesh->GetTrans() = Vector3(i * xzScale * 2.1f , mesh->GetScale().y, 0.0f);
+		mesh->GetTrans() = Vector3(i * xzScale * 2.3f , mesh->GetScale().y, 0.0f);
 		mesh->Init(device, context, box);
 		if (m_maxHeight < mesh->GetScale().y)
 			m_maxHeight = mesh->GetTrans().y + 2.0f;
@@ -36,11 +43,23 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 
 void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
-	if(KEYCHECK(B1, TAP))
+	static float time = 0;
+	time += dt;
+	if (KEYCHECK(B1, TAP))
 	{
-		m_sorter = make_shared<SelectSort>();
-		m_sorter->StartSort(m_vecMeshes);
+		if (m_sortAlgorithm)
+			m_sortAlgorithm.reset();
+		m_sortAlgorithm = make_shared<SelectSort>();
+		m_permitSortUpdate = true;
 	}
+
+	if (time >= 0.2f)
+	{
+		time = 0;
+		if (m_permitSortUpdate)
+			m_sortAlgorithm->Update(m_vecMeshes, m_permitSortUpdate);
+	}
+
 	for (auto& mesh : m_vecMeshes)
 		mesh->Update(context, dt);
 }

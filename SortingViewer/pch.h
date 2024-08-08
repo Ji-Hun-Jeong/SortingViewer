@@ -15,6 +15,10 @@
 #include <vector>
 #include <memory>
 #include <random>
+#include <thread>
+#include <chrono>
+#include <mutex>
+#include <condition_variable>
 #include "Define.h"
 #include "Enum.h"
 
@@ -32,4 +36,8 @@ using std::random_device;
 using std::mt19937;
 using std::uniform_real_distribution;
 using std::uniform_int_distribution;
+using std::thread;
+using std::mutex;
+using std::condition_variable;
+using std::chrono::seconds;
 #include "Struct.h"

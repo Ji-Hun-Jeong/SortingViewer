@@ -13,6 +13,7 @@ void Print(vector<shared_ptr<Mesh>>& vec)
 }
 void SelectSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 {
+	m_doingSort = true;
 	for (int i = 0; i < vec.size() - 1; ++i)
 	{
 		int minIdx = i;
@@ -27,5 +28,14 @@ void SelectSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 		vec[minIdx]->GetTrans().y = tempY;
 		vec[i]->GetScale().y = vec[minIdx]->GetScale().y;
 		vec[minIdx]->GetScale().y = tempHeight;
+
+		if (m_destroy)
+			continue;
+
+		std::unique_lock<mutex> lock(m_mtx);
+		m_sleep = true;
+		m_cv.wait(lock, [this] {return !m_sleep; });
 	}
+	m_sortDone = true;
+	m_doingSort = false;
 }

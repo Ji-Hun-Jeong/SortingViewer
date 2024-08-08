@@ -12,7 +12,8 @@ public:
 
 	float m_maxHeight = 0.0f;
 private:
+	bool m_permitSortUpdate = false;
 	vector<shared_ptr<Mesh>> m_vecMeshes;
-	shared_ptr<Sort> m_sorter;
+	shared_ptr<Sort> m_sortAlgorithm;
 };
 

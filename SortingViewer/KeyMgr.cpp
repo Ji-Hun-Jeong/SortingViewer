@@ -29,8 +29,7 @@ void KeyMgr::Update()
 {
 	KeyUpdate();
 	MouseUpdate();
-	if (KEYCHECK(ESC, TAP))
-		exit(0);
+
 }
 
 Vector2 KeyMgr::GetMouseNDCPos()
