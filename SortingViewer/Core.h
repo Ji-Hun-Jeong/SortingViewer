@@ -17,6 +17,7 @@ public:
 	void Render();
 private:
 	void UpdateGlobalConst();
+
 private:
 	shared_ptr<Mesh> m_skyBox;
 	shared_ptr<Camera> m_camera;

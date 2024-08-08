@@ -48,11 +48,6 @@ void MergeSort::Merge_Sort(vector<shared_ptr<Mesh>>& vec, int left, int mid, int
 	}
 }
 
-void MergeSort::CopyHeight(shared_ptr<Mesh>& mesh, float height)
-{
-	mesh->GetScale().y = height;
-	mesh->GetTrans().y = mesh->GetScale().y;
-}
 
 void MergeSort::Merge(vector<shared_ptr<Mesh>>& vec, int left, int right)
 {

@@ -28,5 +28,6 @@ enum class SORT_TYPE
 	INSERT,
 	MERGE,
 	QUICK,
+	HEAP,
 	END,
 };

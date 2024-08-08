@@ -37,7 +37,7 @@ void Sort::WakeUp()
 {
 	while (!m_sleep);
 	m_sleep = false;
-	m_cv.notify_all();
+	m_cv.notify_one();
 	while (m_sleep == false && m_sortDone == false);
 }
 
@@ -56,12 +56,20 @@ void Sort::Destroy()
 		m_destroy = false;
 	}
 }
+
+void Sort::CopyHeight(shared_ptr<Mesh>& mesh, float height)
+{
+	mesh->GetScale().y = height;
+	mesh->GetTrans().y = mesh->GetScale().y;
+}
+
 void Sort::SwapMeshData(shared_ptr<Mesh>& mesh1, shared_ptr<Mesh>& mesh2)
 {
 	const float tempY = mesh1->GetTrans().y;
-	const float tempHeight = mesh1->GetScale().y;
 	mesh1->GetTrans().y = mesh2->GetTrans().y;
 	mesh2->GetTrans().y = tempY;
+
+	const float tempHeight = mesh1->GetScale().y;
 	mesh1->GetScale().y = mesh2->GetScale().y;
 	mesh2->GetScale().y = tempHeight;
 }

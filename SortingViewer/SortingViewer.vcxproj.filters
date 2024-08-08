@@ -72,6 +72,18 @@
     <ClInclude Include="MergeSort.h">
       <Filter>Sort</Filter>
     </ClInclude>
+    <ClInclude Include="BubbleSort.h">
+      <Filter>Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="InsertSort.h">
+      <Filter>Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickSort.h">
+      <Filter>Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="HeapSort.h">
+      <Filter>Sort</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SortingViewer.rc">
@@ -114,6 +126,18 @@
       <Filter>Sort</Filter>
     </ClCompile>
     <ClCompile Include="MergeSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="InsertSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickSort.cpp">
+      <Filter>Sort</Filter>
+    </ClCompile>
+    <ClCompile Include="HeapSort.cpp">
       <Filter>Sort</Filter>
     </ClCompile>
   </ItemGroup>

@@ -133,6 +133,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BubbleSort.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstBuffer.h" />
@@ -145,10 +146,13 @@
     <ClInclude Include="GeometryGenerator.h" />
     <ClInclude Include="GraphicsCommons.h" />
     <ClInclude Include="GraphicsPSO.h" />
+    <ClInclude Include="HeapSort.h" />
+    <ClInclude Include="InsertSort.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="MergeSort.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="QuickSort.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SelectSort.h" />
     <ClInclude Include="Sort.h" />
@@ -159,6 +163,7 @@
     <ClInclude Include="Texture2D.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BubbleSort.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ConstBuffer.cpp" />
@@ -168,9 +173,12 @@
     <ClCompile Include="GeometryGenerator.cpp" />
     <ClCompile Include="GraphicsCommons.cpp" />
     <ClCompile Include="GraphicsPSO.cpp" />
+    <ClCompile Include="HeapSort.cpp" />
+    <ClCompile Include="InsertSort.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="MergeSort.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="QuickSort.cpp" />
     <ClCompile Include="SelectSort.cpp" />
     <ClCompile Include="Sort.cpp" />
     <ClCompile Include="Sorter.cpp" />

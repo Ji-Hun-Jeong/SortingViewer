@@ -12,19 +12,19 @@ void SelectSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 		{
 			if (vec[j]->GetScale().y < vec[minIdx]->GetScale().y)
 				minIdx = j;
+
+			if (m_destroy)
+				break;
+
+			if (m_oneTimeFinish)
+				continue;
+
+			std::unique_lock<mutex> lock(m_mtx);
+			m_sleep = true;
+			m_cv.wait(lock, [this] {return !m_sleep; });
 		}
 
 		SwapMeshData(vec[i], vec[minIdx]);
-
-		if (m_oneTimeFinish)
-			continue;
-
-		if (m_destroy)
-			break;
-
-		std::unique_lock<mutex> lock(m_mtx);
-		m_sleep = true;
-		m_cv.wait(lock, [this] {return !m_sleep; });
 	}
 	m_sortDone = true;
 	m_doingSort = false;

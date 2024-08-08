@@ -20,5 +20,6 @@ private:
 	shared_ptr<Sort> m_arrSortAlgorithm[(UINT)SORT_TYPE::END];
 	SORT_TYPE m_nextSortType = SORT_TYPE::SELECT;
 	SORT_TYPE m_sortType = SORT_TYPE::SELECT;
+
 };
 
