@@ -121,3 +121,8 @@ MeshData GeometryGenerator::MakeSquare()
 	indices.push_back(3);
 	return returnData;
 }
+
+MeshData GeometryGenerator::MakeBox()
+{
+	return MeshData();
+}
