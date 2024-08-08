@@ -16,7 +16,7 @@ void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& con
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::BUBBLE] = make_shared<BubbleSort>();
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::INSERT] = make_shared<InsertSort>();
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::MERGE] = make_shared<MergeSort>();
-	//m_arrSortAlgorithm[(UINT)SORT_TYPE::QUICK] = make_shared<QuickSort>();
+	m_arrSortAlgorithm[(UINT)SORT_TYPE::QUICK] = make_shared<QuickSort>();
 	//m_arrSortAlgorithm[(UINT)SORT_TYPE::HEAP] = make_shared<HeapSort>();
 	GenerateRandomElements(device, context);
 }
@@ -31,7 +31,7 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	random_device rd;
 	mt19937 gen(rd());
 	uniform_int_distribution<int> randomSize(30, 60);
-	uniform_real_distribution<float> randomHeight(0.1f, 2.0f);
+	uniform_real_distribution<float> randomHeight(0.01f, 2.0f);
 	m_vecMeshes.resize(randomSize(gen));
 
 	MeshData box = GeometryGenerator::MakeBox();
@@ -84,7 +84,8 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 		ChooseSortAlgorithm(SORT_TYPE::INSERT);
 	else if (KEYCHECK(B4, TAP))
 		ChooseSortAlgorithm(SORT_TYPE::MERGE);
-
+	else if (KEYCHECK(B5, TAP))
+		ChooseSortAlgorithm(SORT_TYPE::QUICK);
 
 	if (m_permitSort)
 		m_arrSortAlgorithm[(UINT)m_sortType]->Update(m_vecMeshes, m_permitSort);

@@ -11,7 +11,7 @@ void Sort::Update(vector<shared_ptr<Mesh>>& vec, bool& permitSort)
 	}
 	else if (!m_doingSort)
 	{
-		m_sortThread = 
+		m_sortThread =
 			thread(&Sort::StartSort, this, std::ref(vec));
 	}
 	else if (m_doingSort)
@@ -37,7 +37,7 @@ void Sort::WakeUp()
 {
 	while (!m_sleep);
 	m_sleep = false;
-	m_cv.notify_one();
+	m_cv.notify_all();
 	while (m_sleep == false && m_sortDone == false);
 }
 
@@ -76,11 +76,11 @@ void Sort::SwapMeshData(shared_ptr<Mesh>& mesh1, shared_ptr<Mesh>& mesh2)
 
 void Sort::Print(vector<shared_ptr<Mesh>>& vec)
 {
+	static int cnt = 0;
+	cout << cnt++ << endl;
 	for (int i = 0; i < vec.size(); ++i)
 	{
-		cout << "Pos, X : " << vec[i]->GetTrans().x << " Y : " <<
+		cout << i << " Pos, X : " << vec[i]->GetTrans().x << " Y : " <<
 			vec[i]->GetTrans().y << " Z : " << vec[i]->GetTrans().z << endl;
-		cout << "Scale, X : " << vec[i]->GetScale().x << " Y : " <<
-			vec[i]->GetScale().y << " Z : " << vec[i]->GetScale().z << endl;
 	}
 }
