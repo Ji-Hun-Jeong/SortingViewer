@@ -52,33 +52,30 @@ MeshData GeometryGenerator::MakeSphere(float radius, UINT numOfStack, UINT numOf
 }
 MeshData GeometryGenerator::MakeTriangle()
 {
-    MeshData returnData;
-    vector<Vertex>& vertices = returnData.vertices;
-    Vertex v;
-    v.pos = Vector3(-0.5f, -0.5f, 0.0f);
-    v.normal = Vector3(0.0f, 0.0f, -1.0f);
-    v.uv = Vector2(0.0f, 0.0f);
-    v.color = Vector3(1.0f, 0.0f, 0.0f);
-    vertices.push_back(v);
+	MeshData returnData;
+	vector<Vertex>& vertices = returnData.vertices;
+	Vertex v;
+	v.pos = Vector3(-0.5f, -0.5f, 0.0f);
+	v.normal = Vector3(0.0f, 0.0f, -1.0f);
+	v.uv = Vector2(0.0f, 0.0f);
+	vertices.push_back(v);
 
-    v.pos = Vector3(0.0f, 0.5f, 0.0f);
-    v.normal = Vector3(0.0f, 0.0f, -1.0f);
-    v.uv = Vector2(0.0f, 0.0f);
-    v.color = Vector3(0.0f, 1.0f, 0.0f);
-    vertices.push_back(v);
+	v.pos = Vector3(0.0f, 0.5f, 0.0f);
+	v.normal = Vector3(0.0f, 0.0f, -1.0f);
+	v.uv = Vector2(0.0f, 0.0f);
+	vertices.push_back(v);
 
-    v.pos = Vector3(0.5f, -0.5f, 0.0f);
-    v.normal = Vector3(0.0f, 0.0f, -1.0f);
-    v.uv = Vector2(0.0f, 0.0f);
-    v.color = Vector3(0.0f, 0.0f, 1.0f);
-    vertices.push_back(v);
+	v.pos = Vector3(0.5f, -0.5f, 0.0f);
+	v.normal = Vector3(0.0f, 0.0f, -1.0f);
+	v.uv = Vector2(0.0f, 0.0f);
+	vertices.push_back(v);
 
-    vector<uint16_t>& indices = returnData.indices;
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
+	vector<uint16_t>& indices = returnData.indices;
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
 
-    return returnData;
+	return returnData;
 }
 
 MeshData GeometryGenerator::MakeSquare()
@@ -89,7 +86,6 @@ MeshData GeometryGenerator::MakeSquare()
 	v.pos = Vector3{ -1.0f,-1.0f,0.0f };
 	v.normal = Vector3{ 0.0f,0.0f,-1.0f };
 	v.uv = Vector2{ 0.0f,1.0f };
-	v.color = Vector3(1.0f, 0.0f, 0.0f);
 	//vertex.tangent = Vector3{ 1.0f,0.0f,0.0f };
 	vertices.push_back(v);
 
@@ -124,5 +120,112 @@ MeshData GeometryGenerator::MakeSquare()
 
 MeshData GeometryGenerator::MakeBox()
 {
-	return MeshData();
+	vector<Vector3> positions;
+	vector<Vector3> normals;
+	vector<Vector2> texcoords; // ÅØ½ºÃç ÁÂÇ¥
+
+	// À­¸é
+	positions.push_back(Vector3(-1.0f, 1.0f, -1.0f));
+	positions.push_back(Vector3(-1.0f, 1.0f, 1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, 1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, 1.0f, 0.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	// ¾Æ·§¸é
+	positions.push_back(Vector3(-1.0f, -1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, -1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, -1.0f, 1.0f));
+	positions.push_back(Vector3(-1.0f, -1.0f, 1.0f));
+	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
+	normals.push_back(Vector3(0.0f, -1.0f, 0.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	// ¾Õ¸é
+	positions.push_back(Vector3(-1.0f, -1.0f, -1.0f));
+	positions.push_back(Vector3(-1.0f, 1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, -1.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, -1.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	// µÞ¸é
+	positions.push_back(Vector3(-1.0f, -1.0f, 1.0f));
+	positions.push_back(Vector3(1.0f, -1.0f, 1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, 1.0f));
+	positions.push_back(Vector3(-1.0f, 1.0f, 1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, 1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, 1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, 1.0f));
+	normals.push_back(Vector3(0.0f, 0.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	// ¿ÞÂÊ
+	positions.push_back(Vector3(-1.0f, -1.0f, 1.0f));
+	positions.push_back(Vector3(-1.0f, 1.0f, 1.0f));
+	positions.push_back(Vector3(-1.0f, 1.0f, -1.0f));
+	positions.push_back(Vector3(-1.0f, -1.0f, -1.0f));
+	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(-1.0f, 0.0f, 0.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	// ¿À¸¥ÂÊ
+	positions.push_back(Vector3(1.0f, -1.0f, 1.0f));
+	positions.push_back(Vector3(1.0f, -1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, -1.0f));
+	positions.push_back(Vector3(1.0f, 1.0f, 1.0f));
+	normals.push_back(Vector3(1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(1.0f, 0.0f, 0.0f));
+	normals.push_back(Vector3(1.0f, 0.0f, 0.0f));
+	texcoords.push_back(Vector2(0.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 0.0f));
+	texcoords.push_back(Vector2(1.0f, 1.0f));
+	texcoords.push_back(Vector2(0.0f, 1.0f));
+
+	MeshData meshData;
+	for (size_t i = 0; i < positions.size(); i++) 
+	{
+		Vertex v;
+		v.pos = positions[i];
+		v.normal = normals[i];
+		v.uv = texcoords[i];
+		meshData.vertices.push_back(v);
+	}
+
+	meshData.indices = {
+		0,  1,  2,  0,  2,  3,  // À­¸é
+		4,  5,  6,  4,  6,  7,  // ¾Æ·§¸é
+		8,  9,  10, 8,  10, 11, // ¾Õ¸é
+		12, 13, 14, 12, 14, 15, // µÞ¸é
+		16, 17, 18, 16, 18, 19, // ¿ÞÂÊ
+		20, 21, 22, 20, 22, 23  // ¿À¸¥ÂÊ
+	};
+
+	return meshData;
 }

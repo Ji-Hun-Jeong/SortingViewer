@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "ConstBuffer.h"
 #include "KeyMgr.h"
+#include "Pillar.h"
 Core::Core()
 	: CoreBase()
 {
@@ -18,17 +19,17 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	Graphics::InitCommons(m_device, m_context);
 	KeyMgr::Init(hWnd, m_width, m_height);
 
-	MeshData triangle = GeometryGenerator::MakeSquare();
-	m_mesh = make_shared<Mesh>();
-	m_mesh->GetScale() = Vector3(0.3f);
-	m_mesh->GetRotation().z = 90 * XM_PI / 180.0f;
-	m_mesh->Init(m_device, m_context, triangle);
-	m_mesh->ReadImage(m_device, m_context, "Image/Ground.png", false);
-
 	MeshData sphere = GeometryGenerator::MakeSphere(1.0f, 30, 30);
 	m_skyBox = make_shared<Mesh>();
 	m_skyBox->GetScale() = Vector3(30.0f);
 	m_skyBox->Init(m_device, m_context, sphere);
+
+	MeshData box = GeometryGenerator::MakeBox();
+	m_mesh = make_shared<Pillar>();
+	m_mesh->GetScale() = Vector3(0.2f, 1.0f, 0.2f);
+	m_mesh->GetTrans() = Vector3(0.0f, m_mesh->GetScale().y / 2.0f, 0.0f);
+	m_mesh->Init(m_device, m_context, box);
+	m_mesh->ReadImage(m_device, m_context, "Image/Ground.png");
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.01f, 100.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));

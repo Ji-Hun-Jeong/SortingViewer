@@ -16,6 +16,5 @@ PSInput main(VSInput input)
     
     output.normal = input.normal;
     output.uv = input.uv;
-    output.color = input.color;
     return output;
 }

@@ -14,31 +14,18 @@
     <Filter Include="Buffer">
       <UniqueIdentifier>{42590264-d621-4abd-bd22-1671a92ec96d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Another">
+      <UniqueIdentifier>{491a250c-1499-4517-b412-b0ffc01f73cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SortingViewer.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Default</Filter>
-    </ClInclude>
-    <ClInclude Include="framework.h">
-      <Filter>Default</Filter>
-    </ClInclude>
     <ClInclude Include="Core.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Define.h" />
     <ClInclude Include="CoreBase.h" />
     <ClInclude Include="D3DUtils.h" />
     <ClInclude Include="GraphicsCommons.h" />
     <ClInclude Include="GraphicsPSO.h" />
-    <ClInclude Include="Enum.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="GeometryGenerator.h" />
-    <ClInclude Include="Struct.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Buffer.h">
       <Filter>Buffer</Filter>
@@ -46,6 +33,33 @@
     <ClInclude Include="ConstBuffer.h">
       <Filter>Buffer</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="KeyMgr.h" />
+    <ClInclude Include="framework.h">
+      <Filter>Another</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Another</Filter>
+    </ClInclude>
+    <ClInclude Include="SortingViewer.h">
+      <Filter>Another</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Another</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Enum.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Pillar.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SortingViewer.rc">
@@ -61,7 +75,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SortingViewer.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CoreBase.cpp" />
     <ClCompile Include="D3DUtils.cpp" />
@@ -76,12 +89,24 @@
     <ClCompile Include="ConstBuffer.cpp">
       <Filter>Buffer</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="KeyMgr.cpp" />
+    <ClCompile Include="SortingViewer.cpp">
+      <Filter>Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Pillar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="BasicVertexShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="BasicPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBoxVertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="SkyBoxPixelShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
