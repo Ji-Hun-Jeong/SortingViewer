@@ -20,3 +20,13 @@ enum class IBL_TYPE
 	LUT,
 	END,
 };
+
+enum class SORT_TYPE
+{
+	SELECT,
+	BUBBLE,
+	INSERT,
+	MERGE,
+	QUICK,
+	END,
+};

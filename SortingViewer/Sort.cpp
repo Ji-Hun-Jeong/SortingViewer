@@ -1,21 +1,78 @@
 #include "pch.h"
 #include "Sort.h"
 
-void Sort::Update(vector<shared_ptr<Mesh>>& vec, bool& permitSortUpdate)
+void Sort::Update(vector<shared_ptr<Mesh>>& vec, bool& permitSort)
 {
 	if (m_sortDone)
 	{
 		m_sortThread.join();
 		m_sortDone = false;
-		permitSortUpdate = false;
+		permitSort = false;
 	}
 	else if (!m_doingSort)
 	{
-		m_sortThread = thread(&Sort::StartSort, this
-			, std::ref(vec));
+		m_sortThread = 
+			thread(&Sort::StartSort, this, std::ref(vec));
 	}
 	else if (m_doingSort)
 	{
 		WakeUp();
+	}
+}
+
+void Sort::OneTimeFinish()
+{
+	m_oneTimeFinish = true;
+	WakeUp();
+	m_sortThread.join();
+
+	m_oneTimeFinish = false;
+	m_sortDone = false;
+	m_doingSort = false;
+	m_sleep = false;
+	m_destroy = false;
+}
+
+void Sort::WakeUp()
+{
+	while (!m_sleep);
+	m_sleep = false;
+	m_cv.notify_all();
+	while (m_sleep == false && m_sortDone == false);
+}
+
+void Sort::Destroy()
+{
+	if (m_sortThread.joinable())
+	{
+		m_destroy = true;
+		WakeUp();
+		m_sortThread.join();
+
+		m_oneTimeFinish = false;
+		m_sortDone = false;
+		m_doingSort = false;
+		m_sleep = false;
+		m_destroy = false;
+	}
+}
+void Sort::SwapMeshData(shared_ptr<Mesh>& mesh1, shared_ptr<Mesh>& mesh2)
+{
+	const float tempY = mesh1->GetTrans().y;
+	const float tempHeight = mesh1->GetScale().y;
+	mesh1->GetTrans().y = mesh2->GetTrans().y;
+	mesh2->GetTrans().y = tempY;
+	mesh1->GetScale().y = mesh2->GetScale().y;
+	mesh2->GetScale().y = tempHeight;
+}
+
+void Sort::Print(vector<shared_ptr<Mesh>>& vec)
+{
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		cout << "Pos, X : " << vec[i]->GetTrans().x << " Y : " <<
+			vec[i]->GetTrans().y << " Z : " << vec[i]->GetTrans().z << endl;
+		cout << "Scale, X : " << vec[i]->GetScale().x << " Y : " <<
+			vec[i]->GetScale().y << " Z : " << vec[i]->GetScale().z << endl;
 	}
 }

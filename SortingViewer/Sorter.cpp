@@ -4,21 +4,20 @@
 #include "GeometryGenerator.h"
 #include "KeyMgr.h"
 #include "SelectSort.h"
+#include "MergeSort.h"
 
 void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)
 {
+	m_arrSortAlgorithm[(UINT)SORT_TYPE::SELECT] = make_shared<SelectSort>();
+	m_arrSortAlgorithm[(UINT)SORT_TYPE::MERGE] = make_shared<MergeSort>();
 	GenerateRandomElements(device, context);
 }
 
 void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	, ComPtr<ID3D11DeviceContext>& context)
 {
-	if (m_sortAlgorithm)
-	{
-		m_sortAlgorithm->Destroy();
-		m_permitSortUpdate = false;
-	}
-
+	if (m_arrSortAlgorithm[(UINT)m_sortType]->DoingSort())
+		return;
 
 	m_vecMeshes.clear();
 	random_device rd;
@@ -28,40 +27,71 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	m_vecMeshes.resize(randomSize(gen));
 
 	MeshData box = GeometryGenerator::MakeBox();
-	float xzScale = 0.1f;
+	float xzScale = 0.01f;
 	for (int i = 0; i < m_vecMeshes.size(); ++i)
 	{
 		auto& mesh = m_vecMeshes[i];
 		mesh = make_shared<Mesh>();
 		mesh->GetScale() = Vector3(xzScale, randomHeight(gen), xzScale);
-		mesh->GetTrans() = Vector3(i * xzScale * 2.3f , mesh->GetScale().y, 0.0f);
+		mesh->GetTrans() = Vector3(i * xzScale * 2.3f, mesh->GetScale().y, 0.0f);
 		mesh->Init(device, context, box);
 		if (m_maxHeight < mesh->GetScale().y)
-			m_maxHeight = mesh->GetTrans().y + 2.0f;
+			m_maxHeight = mesh->GetTrans().y;
+	}
+	m_maxHeight += 2.0f;
+}
+
+void Sorter::ChooseSortAlgorithm(SORT_TYPE sortType)
+{
+	m_nextSortType = sortType;
+	if (m_nextSortType == m_sortType)	// 그대로 진행
+	{
+		if (m_arrSortAlgorithm[(UINT)m_sortType]->DoingSort())	// 정렬중이면
+			m_oneTimeFinishSort = true;		// 바로 완료
+		m_permitSort = true;
+	}
+	else								// 다음과 달라
+	{
+		if (!m_arrSortAlgorithm[(UINT)m_sortType]->DoingSort())
+			m_changeSortType = true;
 	}
 }
 
 void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
-	static float time = 0;
-	time += dt;
-	if (KEYCHECK(B1, TAP))
+	// 1 -> 2 -> 2 고치기	
+
+	if (m_oneTimeFinishSort)
 	{
-		if (m_sortAlgorithm)
-			m_sortAlgorithm.reset();
-		m_sortAlgorithm = make_shared<SelectSort>();
-		m_permitSortUpdate = true;
+		m_arrSortAlgorithm[(UINT)m_sortType]->OneTimeFinish();
+		m_permitSort = false;
+		m_oneTimeFinishSort = false;
 	}
 
-	if (time >= 0.2f)
+	if (KEYCHECK(B1, TAP))
 	{
-		time = 0;
-		if (m_permitSortUpdate)
-			m_sortAlgorithm->Update(m_vecMeshes, m_permitSortUpdate);
+		ChooseSortAlgorithm(SORT_TYPE::SELECT);
 	}
+	else if (KEYCHECK(B2, TAP))
+	{
+		ChooseSortAlgorithm(SORT_TYPE::MERGE);
+	}
+
+	if (m_permitSort)
+		m_arrSortAlgorithm[(UINT)m_sortType]->Update(m_vecMeshes, m_permitSort);
+
+	if (m_changeSortType)
+	{
+		m_sortType = m_nextSortType;
+		m_changeSortType = false;
+		m_permitSort = true;
+	}
+	else
+		m_nextSortType = m_sortType;
 
 	for (auto& mesh : m_vecMeshes)
 		mesh->Update(context, dt);
+
 }
 
 void Sorter::Render(ComPtr<ID3D11DeviceContext>& context)
