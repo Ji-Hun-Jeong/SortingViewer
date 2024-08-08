@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "ConstBuffer.h"
 #include "KeyMgr.h"
-#include "Pillar.h"
+#include "Sorter.h"
 Core::Core()
 	: CoreBase()
 {
@@ -24,12 +24,9 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_skyBox->GetScale() = Vector3(30.0f);
 	m_skyBox->Init(m_device, m_context, sphere);
 
-	MeshData box = GeometryGenerator::MakeBox();
-	m_mesh = make_shared<Pillar>();
-	m_mesh->GetScale() = Vector3(0.2f, 1.0f, 0.2f);
-	m_mesh->GetTrans() = Vector3(0.0f, m_mesh->GetScale().y / 2.0f, 0.0f);
-	m_mesh->Init(m_device, m_context, box);
-	m_mesh->ReadImage(m_device, m_context, "Image/Ground.png");
+	m_sorter = make_shared<Sorter>();
+	m_sorter->Init(m_device, m_context);
+	m_globalConst.maxHeight = m_sorter->m_maxHeight;
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.01f, 100.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
@@ -65,7 +62,9 @@ void Core::Update()
 
 	UpdateGlobalConst();
 
-	m_mesh->Update(m_context, dt);
+	if (KEYCHECK(SPACE, TAP))
+		m_sorter->GenerateRandomElements(m_device, m_context);
+	m_sorter->Update(m_context, dt);
 	m_skyBox->Update(m_context, dt);
 }
 
@@ -80,7 +79,7 @@ void Core::Render()
 	m_context->RSSetViewports(1, &m_viewPort);
 	CoreBase::SetPSO(Graphics::basicSolidPSO);
 
-	m_mesh->Render(m_context);
+	m_sorter->Render(m_context);
 
 	CoreBase::SetPSO(Graphics::skyBoxSolidPSO);
 	m_skyBox->Render(m_context);

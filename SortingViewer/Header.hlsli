@@ -17,6 +17,8 @@ cbuffer GlobalConst : register(b0)
 {
     matrix view;
     matrix proj;
+    float maxHeight;
+    float3 dummy;
 };
 
 SamplerState g_linearSampler : register(s0);

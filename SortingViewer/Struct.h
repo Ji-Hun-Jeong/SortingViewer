@@ -21,6 +21,8 @@ struct GlobalConst
 {
 	Matrix view;
 	Matrix proj;
+	float maxHeight;
+	Vector3 dummy;
 };
 
 static_assert(sizeof(MeshConst) % 16 == 0, "MeshConst Size Check");

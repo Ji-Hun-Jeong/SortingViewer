@@ -14,6 +14,7 @@
 #include <windows.h>
 #include <vector>
 #include <memory>
+#include <random>
 #include "Define.h"
 #include "Enum.h"
 
@@ -27,4 +28,8 @@ using std::vector;
 using std::shared_ptr;
 using std::make_shared;
 using DirectX::XM_PI;
+using std::random_device;
+using std::mt19937;
+using std::uniform_real_distribution;
+using std::uniform_int_distribution;
 #include "Struct.h"

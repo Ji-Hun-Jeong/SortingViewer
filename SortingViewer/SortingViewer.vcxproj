@@ -148,8 +148,10 @@
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Pillar.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SelectSort.h" />
+    <ClInclude Include="Sort.h" />
+    <ClInclude Include="Sorter.h" />
     <ClInclude Include="SortingViewer.h" />
     <ClInclude Include="Struct.h" />
     <ClInclude Include="targetver.h" />
@@ -167,7 +169,9 @@
     <ClCompile Include="GraphicsPSO.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Pillar.cpp" />
+    <ClCompile Include="SelectSort.cpp" />
+    <ClCompile Include="Sort.cpp" />
+    <ClCompile Include="Sorter.cpp" />
     <ClCompile Include="SortingViewer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
   </ItemGroup>
