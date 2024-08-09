@@ -28,6 +28,8 @@ struct GlobalConst
 	Matrix viewProj;
 	float maxHeight;
 	Vector3 eyePos;
+	float maxWidth;
+	Vector3 dummy;
 };
 
 static_assert(sizeof(MeshConst) % 16 == 0, "MeshConst Size Check");

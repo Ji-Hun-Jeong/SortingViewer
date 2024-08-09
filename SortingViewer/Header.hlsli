@@ -20,6 +20,8 @@ cbuffer GlobalConst : register(b0)
     matrix viewProj;
     float maxHeight;
     float3 eyePos;
+    float maxWidth;
+    float3 dummy;
 };
 
 cbuffer MeshConst : register(b1)

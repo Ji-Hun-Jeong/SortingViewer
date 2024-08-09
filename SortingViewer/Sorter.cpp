@@ -43,9 +43,11 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	uniform_int_distribution<int> randomSize(30, 60);
 	uniform_real_distribution<float> randomHeight(0.01f, 0.5f);
 	m_vecMeshes.resize(randomSize(gen));
-
 	MeshData box = GeometryGenerator::MakeBox();
 	float xzScale = 0.01f;
+
+	m_maxWidth = xzScale * m_vecMeshes.size() * 2.0f;
+
 	for (int i = 0; i < m_vecMeshes.size(); ++i)
 	{
 		auto& mesh = m_vecMeshes[i];
@@ -79,7 +81,7 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, const GlobalConst& glo
 	, float dt)
 {
 	static float time = 0;
-	static float animateTime = 0.05f;
+	static float animateTime = 0.01f;
 	time += dt;
 	if (m_oneTimeFinishSort)
 	{

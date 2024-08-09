@@ -4,6 +4,9 @@ class Sort;
 class Sorter
 {
 public:
+	virtual ~Sorter();
+
+public:
 	void Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 	void GenerateRandomElements(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 
@@ -14,8 +17,9 @@ public:
 	void MeshUpdate(const GlobalConst& globalConst, float dt, UINT startIdx, UINT finishIdx);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
 
+	float m_maxWidth = 0.0f;
 	float m_maxHeight = 0.0f;
-	virtual ~Sorter();
+
 private:
 	bool m_permitSort = false;
 	bool m_changeSortType = false;

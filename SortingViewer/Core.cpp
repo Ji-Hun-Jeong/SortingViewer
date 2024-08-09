@@ -32,6 +32,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_sorter = make_shared<Sorter>();
 	m_sorter->Init(m_device, m_context);
 	m_globalConst.maxHeight = m_sorter->m_maxHeight;
+	m_globalConst.maxWidth = m_sorter->m_maxWidth;
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.001f, 100.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
