@@ -42,9 +42,21 @@ void MergeSort::Merge_Sort(vector<shared_ptr<Mesh>>& vec, int left, int mid, int
 		if (m_oneTimeFinish)
 			continue;
 
+		int idxL = l;
+		int idxM = m;
+
+		if (l >= mid)
+			idxL = mid-1;
+		if (m > right)
+			idxM = right;
+
+		SetMeshConst(vec[i], vec[idxL], vec[idxM], true);
+
 		std::unique_lock<mutex> lock(m_mtx);
 		m_sleep = true;
 		m_cv.wait(lock, [this] {return !m_sleep; });
+
+		SetMeshConst(vec[i], vec[idxL], vec[idxM], false);
 	}
 }
 

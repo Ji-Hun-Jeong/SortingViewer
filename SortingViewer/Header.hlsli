@@ -21,6 +21,15 @@ cbuffer GlobalConst : register(b0)
     float3 dummy;
 };
 
+cbuffer MeshConst : register(b1)
+{
+    matrix world;
+    int stdElement;
+    int cmpElement1;
+    int cmpElement2;
+    int something;
+};
+
 SamplerState g_linearSampler : register(s0);
 TextureCube g_specularCube : register(t10);
 TextureCube g_irradianceCube : register(t11);

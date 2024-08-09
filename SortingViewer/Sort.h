@@ -25,6 +25,8 @@ protected:
 	void CopyHeight(shared_ptr<Mesh>& mesh, float height);
 	void SwapMeshData(shared_ptr<Mesh>& mesh1, shared_ptr<Mesh>& mesh2);
 	void Print(vector<shared_ptr<Mesh>>& vec);
+	void SetMeshConst(shared_ptr<Mesh>& stdMesh, shared_ptr<Mesh>& cmpMesh1
+		, shared_ptr<Mesh>& cmpMesh2, bool onOff);
 
 	bool m_startSort = false;
 	bool m_oneTimeFinish = false;
@@ -36,5 +38,6 @@ protected:
 	thread m_sortThread;
 	mutex m_mtx;
 	condition_variable m_cv;
+	shared_ptr<Mesh> m_nullPtr;
 };
 

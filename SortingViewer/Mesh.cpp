@@ -49,6 +49,7 @@ void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)
 
 	context->VSSetConstantBuffers(1, 1, m_meshConstBuffer->GetBufferAddress());
 
+	context->PSSetConstantBuffers(1, 1, m_meshConstBuffer->GetBufferAddress());
 	context->PSSetShaderResources(0, 1, m_texture->GetSRVAddress());
 
 	context->DrawIndexed(m_indexCount, 0, 0);

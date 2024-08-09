@@ -1,8 +1,4 @@
 #include "Header.hlsli"
-cbuffer MeshConst : register(b1)
-{
-    matrix world;
-}
 PSInput main(VSInput input)
 {
     PSInput output;

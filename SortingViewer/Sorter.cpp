@@ -30,8 +30,8 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	m_vecMeshes.clear();
 	random_device rd;
 	mt19937 gen(rd());
-	uniform_int_distribution<int> randomSize(30, 60);
-	uniform_real_distribution<float> randomHeight(0.01f, 2.0f);
+	uniform_int_distribution<int> randomSize(300, 600);
+	uniform_real_distribution<float> randomHeight(0.01f, 5.0f);
 	m_vecMeshes.resize(randomSize(gen));
 
 	MeshData box = GeometryGenerator::MakeBox();
@@ -67,8 +67,9 @@ void Sorter::ChooseSortAlgorithm(SORT_TYPE sortType)
 
 void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
-	// 1 -> 2 -> 2 °íÄ¡±â	
-
+	static float time = 0;
+	static float animateTime = 0.01f;
+	time += dt;
 	if (m_oneTimeFinishSort)
 	{
 		m_arrSortAlgorithm[(UINT)m_sortType]->OneTimeFinish();
@@ -89,8 +90,11 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 	else if (KEYCHECK(B6, TAP))
 		ChooseSortAlgorithm(SORT_TYPE::HEAP);
 
-	if (m_permitSort)
+	if (m_permitSort && time > animateTime)
+	{
 		m_arrSortAlgorithm[(UINT)m_sortType]->Update(m_vecMeshes, m_permitSort);
+		time = 0.0f;
+	}	
 
 	if (m_changeSortType)
 	{
@@ -101,9 +105,13 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 	else
 		m_nextSortType = m_sortType;
 
+	while (m_arrSortAlgorithm[(UINT)m_sortType]->DoingSort() &&
+		!m_arrSortAlgorithm[(UINT)m_sortType]->IsSleep())
+	{
+		int a = 1;
+	}
 	for (auto& mesh : m_vecMeshes)
 		mesh->Update(context, dt);
-
 }
 
 void Sorter::Render(ComPtr<ID3D11DeviceContext>& context)

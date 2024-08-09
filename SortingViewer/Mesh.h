@@ -16,6 +16,7 @@ public:
 	Vector3& GetTrans() { return m_translation; }
 	Vector3& GetRotation() { return m_rotation; }
 	Vector3& GetScale() { return m_scale; }
+	MeshConst& GetMeshConst() { return m_meshConst; }
 
 protected:
 	ComPtr<ID3D11Buffer> m_vertexBuffer;

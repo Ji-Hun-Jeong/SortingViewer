@@ -84,3 +84,14 @@ void Sort::Print(vector<shared_ptr<Mesh>>& vec)
 			vec[i]->GetTrans().y << " Z : " << vec[i]->GetTrans().z << endl;
 	}
 }
+
+void Sort::SetMeshConst(shared_ptr<Mesh>& stdMesh, shared_ptr<Mesh>& cmpMesh1
+	, shared_ptr<Mesh>& cmpMesh2, bool onOff)
+{
+	if (stdMesh)
+		stdMesh->GetMeshConst().stdElement = onOff;
+	if(cmpMesh1)
+		cmpMesh1->GetMeshConst().cmpElement1 = onOff;
+	if (cmpMesh2)
+		cmpMesh2->GetMeshConst().cmpElement2 = onOff;
+}

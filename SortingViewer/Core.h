@@ -10,6 +10,7 @@ class Core
 {
 public:
 	Core();
+	~Core();
 public:
 	void Init(HWND hWnd, UINT width, UINT height);
 	void Progress();

@@ -36,9 +36,13 @@ int QuickSort::Partition(vector<shared_ptr<Mesh>>& vec, int left, int right)
 			if (m_oneTimeFinish)
 				continue;
 
+			SetMeshConst(vec[left], vec[l], vec[r], true);
+
 			std::unique_lock<mutex> lock(m_mtx);
 			m_sleep = true;
 			m_cv.wait(lock, [this] {return !m_sleep; });
+
+			SetMeshConst(vec[left], vec[l], vec[r], false);
 		}
 
 		while (vec[r]->GetScale().y > pivot && r > 0)
@@ -50,9 +54,13 @@ int QuickSort::Partition(vector<shared_ptr<Mesh>>& vec, int left, int right)
 			if (m_oneTimeFinish)
 				continue;
 
+			SetMeshConst(vec[left], vec[l], vec[r], true);
+
 			std::unique_lock<mutex> lock(m_mtx);
 			m_sleep = true;
 			m_cv.wait(lock, [this] {return !m_sleep; });
+
+			SetMeshConst(vec[left], vec[l], vec[r], false);
 		}
 			
 		if (l >= r) break;

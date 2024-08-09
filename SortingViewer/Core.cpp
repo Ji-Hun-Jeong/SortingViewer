@@ -13,6 +13,11 @@ Core::Core()
 
 }
 
+Core::~Core()
+{
+
+}
+
 void Core::Init(HWND hWnd, UINT width, UINT height)
 {
 	CoreBase::Init(hWnd, width, height);
@@ -51,6 +56,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 		m_arrIBL[(UINT)IBL_TYPE::LUT].GetSRV()
 	};
 	m_context->PSSetShaderResources(10, 1, arrSRV.data());
+	Core::Update();
 }
 
 void Core::Update()
@@ -70,7 +76,7 @@ void Core::Update()
 
 	if (KEYCHECK(SPACE, TAP))
 		m_sorter->GenerateRandomElements(m_device, m_context);
-
+		
 	m_sorter->Update(m_context, dt);
 
 	m_skyBox->Update(m_context, dt);
@@ -104,6 +110,7 @@ void Core::UpdateGlobalConst()
 	m_globalConst.proj = m_camera->GetProjRow();
 	m_globalConst.view = m_globalConst.view.Transpose();
 	m_globalConst.proj = m_globalConst.proj.Transpose();
+
 	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
 

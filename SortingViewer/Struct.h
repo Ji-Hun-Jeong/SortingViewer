@@ -15,6 +15,10 @@ struct MeshData
 struct MeshConst
 {
 	Matrix world;
+	int stdElement = false;
+	int cmpElement1 = false;
+	int cmpElement2 = false;
+	int something = false;
 };
 
 struct GlobalConst
@@ -22,7 +26,7 @@ struct GlobalConst
 	Matrix view;
 	Matrix proj;
 	float maxHeight;
-	Vector3 dummy;
+	Vector3 eyePos;
 };
 
 static_assert(sizeof(MeshConst) % 16 == 0, "MeshConst Size Check");

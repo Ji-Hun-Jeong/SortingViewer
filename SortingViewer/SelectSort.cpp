@@ -19,9 +19,13 @@ void SelectSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 			if (m_oneTimeFinish)
 				continue;
 
+			SetMeshConst(vec[minIdx], vec[j], m_nullPtr, true);
+
 			std::unique_lock<mutex> lock(m_mtx);
 			m_sleep = true;
 			m_cv.wait(lock, [this] {return !m_sleep; });
+
+			SetMeshConst(vec[minIdx], vec[j], m_nullPtr, false);
 		}
 
 		SwapMeshData(vec[i], vec[minIdx]);
