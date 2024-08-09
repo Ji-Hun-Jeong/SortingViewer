@@ -18,13 +18,14 @@ struct MeshConst
 	int stdElement = false;
 	int cmpElement1 = false;
 	int cmpElement2 = false;
-	int something = false;
+	int findPos = false;
 };
 
 struct GlobalConst
 {
 	Matrix view;
 	Matrix proj;
+	Matrix viewProj;
 	float maxHeight;
 	Vector3 eyePos;
 };

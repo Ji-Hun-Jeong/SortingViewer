@@ -57,7 +57,9 @@ void MergeSort::Merge_Sort(vector<shared_ptr<Mesh>>& vec, int left, int mid, int
 		m_cv.wait(lock, [this] {return !m_sleep; });
 
 		SetMeshConst(vec[i], vec[idxL], vec[idxM], false);
+		vec[i]->GetMeshConst().findPos = true;
 	}
+	UnlockFindPos(vec);
 }
 
 

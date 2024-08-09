@@ -5,8 +5,10 @@ void BubbleSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 {
 	m_doingSort = true;
 	int n = vec.size();
+	shared_ptr<Mesh> nullMesh(nullptr);
 	for (int i = n - 1; i > 0; i--)
 	{
+		SetMeshConst(vec[i], nullMesh, m_nullPtr, true);
 		for (int j = 0; j < i; j++)
 		{
 			if (vec[j]->GetScale().y > vec[j + 1]->GetScale().y)
@@ -17,15 +19,18 @@ void BubbleSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 
 			if (m_oneTimeFinish)
 				continue;
-			SetMeshConst(vec[j], vec[j + 1], m_nullPtr, true);
+			SetMeshConst(m_nullPtr, vec[j], vec[j + 1], true);
 
 			std::unique_lock<mutex> lock(m_mtx);
 			m_sleep = true;
 			m_cv.wait(lock, [this] {return !m_sleep; });
 
-			SetMeshConst(vec[j], vec[j + 1], m_nullPtr, false);
+			SetMeshConst(m_nullPtr, vec[j], vec[j + 1], false);
 		}
+		SetMeshConst(vec[i], nullMesh, m_nullPtr, false);
+		vec[i]->GetMeshConst().findPos = true;
 	}
+	UnlockFindPos(vec);
 	m_sortDone = true;
 	m_doingSort = false;
 }

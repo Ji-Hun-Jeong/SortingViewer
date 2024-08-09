@@ -106,7 +106,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
    RECT windowSize = { 0,0,1280,960 };
-   AdjustWindowRect(&windowSize, WS_OVERLAPPEDWINDOW, true);
+   AdjustWindowRect(&windowSize, WS_OVERLAPPEDWINDOW, false);
    UINT width = windowSize.right - windowSize.left;
    UINT height = windowSize.bottom - windowSize.top;
    g_hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -116,7 +116,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
-   g_core.Init(g_hWnd, width, height);
+   g_core.Init(g_hWnd, 1280, 960);
    ShowWindow(g_hWnd, nCmdShow);
    UpdateWindow(g_hWnd);
 

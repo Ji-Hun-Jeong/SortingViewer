@@ -7,13 +7,22 @@ using std::priority_queue;
 void HeapSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 {
 	m_doingSort = true;
-
+	shared_ptr<Mesh> nullMesh;
 	priority_queue<float, vector<float>, std::greater<float>> q;
 	for (auto& mesh : vec)
+	{
 		q.push(mesh->GetScale().y);
+		SetMeshConst(nullMesh, m_nullPtr, mesh, true);
+
+		std::unique_lock<mutex> lock(m_mtx);
+		m_sleep = true;
+		m_cv.wait(lock, [this] {return !m_sleep; });
+
+		SetMeshConst(nullMesh, m_nullPtr, mesh, false);
+	}
+		
 	
 	int i = 0;
-	shared_ptr<Mesh> nullMesh;
 	while (!q.empty())
 	{
 		CopyHeight(vec[i], q.top());
@@ -32,9 +41,10 @@ void HeapSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 		m_cv.wait(lock, [this] {return !m_sleep; });
 
 		SetMeshConst(vec[i], m_nullPtr, nullMesh, false);
+		vec[i]->GetMeshConst().findPos = true;
 		++i;
 	}
-	
+	UnlockFindPos(vec);
 	m_sortDone = true;
 	m_doingSort = false;
 }

@@ -66,18 +66,22 @@ void Mesh::ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& 
 	m_texture->ReadImage(device, context, filePath, useSRGB);
 }
 
-void Mesh::FrustumCulling(const GlobalConst globalConst)
+void Mesh::FrustumCulling(const GlobalConst& globalConst)
 {
-	m_drawMe = false;
-	Matrix mvp = m_meshConst.world * globalConst.view * globalConst.proj;
+	Matrix mvp = m_meshConst.world * globalConst.viewProj;
 	for (auto& v : m_meshData.vertices)
 	{
 		Vector4 pos = Vector4(v.pos.x, v.pos.y, v.pos.z, 1.0f);
 		pos = Vector4::Transform(pos, mvp);
-		pos /= pos.w;
-		if (pos.x < -1 || pos.x > 1 || pos.y < -1 || pos.y > 1 || pos.z < -1 || pos.z > 1)
-			continue;
-		m_drawMe = true;
-		break;
+		if (pos.w != 0)
+			pos /= pos.w;
+		// Box의 Scale이 너무 커서 화면에 있는게 확실함에도 Vertex들이 화면에서 빠져나가서
+		// 안그려짐
+		if (pos.z >= 0.0f && pos.z <= 1.0f)
+		{
+			m_drawMe = true;
+			return;
+		}
 	}
+	m_drawMe = false;
 }

@@ -33,7 +33,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_sorter->Init(m_device, m_context);
 	m_globalConst.maxHeight = m_sorter->m_maxHeight;
 
-	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.01f, 100.0f);
+	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.001f, 100.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
 
 	m_globalConstBuffer = make_shared<ConstBuffer>();
@@ -90,6 +90,7 @@ void Core::FinalUpdate()
 	m_skyBox->FinalUpdate(m_context, dt);
 	m_globalConst.view = m_globalConst.view.Transpose();
 	m_globalConst.proj = m_globalConst.proj.Transpose();
+	m_globalConst.viewProj = m_globalConst.viewProj.Transpose();
 	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
 
@@ -119,6 +120,7 @@ void Core::UpdateGlobalConst()
 {
 	m_globalConst.view = m_camera->GetViewRow();
 	m_globalConst.proj = m_camera->GetProjRow();
+	m_globalConst.viewProj = m_globalConst.view * m_globalConst.proj;
 }
 
 void Core::Progress()

@@ -15,5 +15,7 @@ float4 main(PSInput input) : SV_TARGET
         color = float3(0.0f, 0.0f, 1.0f);
     else if (cmpElement2)
         color = float3(0.0f, 1.0f, 0.0f);
+    else if(findPos)
+        color = 0.3f;
     return float4(color, 1.0f);
 }

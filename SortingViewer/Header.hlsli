@@ -17,8 +17,9 @@ cbuffer GlobalConst : register(b0)
 {
     matrix view;
     matrix proj;
+    matrix viewProj;
     float maxHeight;
-    float3 dummy;
+    float3 eyePos;
 };
 
 cbuffer MeshConst : register(b1)
@@ -27,7 +28,7 @@ cbuffer MeshConst : register(b1)
     int stdElement;
     int cmpElement1;
     int cmpElement2;
-    int something;
+    int findPos;
 };
 
 SamplerState g_linearSampler : register(s0);

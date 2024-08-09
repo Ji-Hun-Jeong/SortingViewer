@@ -5,10 +5,8 @@ void InsertSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 {
 	m_doingSort = true;
 	int n = vec.size();
-	for (int i = 1; i < n; i++)
+	for (int i = 0; i < n; i++)
 	{
-		float key = vec[i]->GetScale().y;
-
 		int j = i - 1;
 		for (; j >= 0; j--)
 		{
@@ -23,15 +21,17 @@ void InsertSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 			if (m_oneTimeFinish)
 				continue;
 
-			SetMeshConst(vec[j + 1], vec[j], m_nullPtr, true);
+			SetMeshConst(vec[j], vec[j + 1], m_nullPtr, true);
 
 			std::unique_lock<mutex> lock(m_mtx);
 			m_sleep = true;
 			m_cv.wait(lock, [this] {return !m_sleep; });
 
-			SetMeshConst(vec[j + 1], vec[j], m_nullPtr, false);
+			SetMeshConst(vec[j], vec[j + 1], m_nullPtr, false);
 		}
+		vec[i]->GetMeshConst().findPos = true;
 	}
+	UnlockFindPos(vec);
 	m_sortDone = true;
 	m_doingSort = false;
 }

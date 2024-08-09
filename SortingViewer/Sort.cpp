@@ -57,6 +57,12 @@ void Sort::Destroy()
 	}
 }
 
+void Sort::UnlockFindPos(vector<shared_ptr<Mesh>>& vec)
+{
+	for (auto& mesh : vec)
+		mesh->GetMeshConst().findPos = false;
+}
+
 void Sort::CopyHeight(shared_ptr<Mesh>& mesh, float height)
 {
 	mesh->GetScale().y = height;

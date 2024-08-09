@@ -18,6 +18,7 @@ void QuickSort::Quick_Sort(vector<shared_ptr<Mesh>>& vec, int left, int right)
 	int q = Partition(vec, left, right);
 	Quick_Sort(vec, left, q - 1);
 	Quick_Sort(vec, q + 1, right);
+
 }
 
 int QuickSort::Partition(vector<shared_ptr<Mesh>>& vec, int left, int right)
@@ -44,6 +45,7 @@ int QuickSort::Partition(vector<shared_ptr<Mesh>>& vec, int left, int right)
 
 			SetMeshConst(vec[left], vec[l], vec[r], false);
 		}
+		
 
 		while (vec[r]->GetScale().y > pivot && r > 0)
 		{
@@ -62,22 +64,19 @@ int QuickSort::Partition(vector<shared_ptr<Mesh>>& vec, int left, int right)
 
 			SetMeshConst(vec[left], vec[l], vec[r], false);
 		}
-			
+		
 		if (l >= r) break;
-
 		SwapMeshData(vec[l++], vec[r--]);
 		if (m_destroy)
 			break;
 
 		if (m_oneTimeFinish)
 			continue;
-
 		std::unique_lock<mutex> lock(m_mtx);
 		m_sleep = true;
 		m_cv.wait(lock, [this] {return !m_sleep; });
 		
 	} while (l <= r);
-
 	SwapMeshData(vec[left], vec[r]);
 	return r;
 }
