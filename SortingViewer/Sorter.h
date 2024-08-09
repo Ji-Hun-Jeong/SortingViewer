@@ -8,9 +8,10 @@ public:
 	void GenerateRandomElements(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context);
 
 	void ChooseSortAlgorithm(SORT_TYPE sortType);
-	void Update(ComPtr<ID3D11DeviceContext>& context, float dt);
+	void Update(ComPtr<ID3D11DeviceContext>& context, const GlobalConst& globalConst
+		, float dt);
 	void FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt);
-	void MeshUpdate(float dt, UINT startIdx, UINT finishIdx);
+	void MeshUpdate(const GlobalConst& globalConst, float dt, UINT startIdx, UINT finishIdx);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
 
 	float m_maxHeight = 0.0f;

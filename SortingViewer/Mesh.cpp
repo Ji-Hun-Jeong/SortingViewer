@@ -12,6 +12,7 @@ Mesh::Mesh()
 void Mesh::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context
 	, const MeshData& meshData)
 {
+	m_meshData = meshData;
 	D3DUtils::CreateVertexBuffer<Vertex>(device, meshData.vertices, m_vertexBuffer);
 
 	D3DUtils::CreateIndexBuffer<uint16_t>(device, meshData.indices, m_indexBuffer);
@@ -25,7 +26,7 @@ void Mesh::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& conte
 	m_texture = make_shared<Texture2D>();
 }
 
-void Mesh::Update(float dt)
+void Mesh::Update(const GlobalConst globalConst, float dt)
 {
 	m_meshConst.world =
 		Matrix::CreateScale(m_scale)
@@ -33,16 +34,19 @@ void Mesh::Update(float dt)
 		* Matrix::CreateRotationY(m_rotation.y)
 		* Matrix::CreateRotationZ(m_rotation.z)
 		* Matrix::CreateTranslation(m_translation);
-	m_meshConst.world = m_meshConst.world.Transpose();
+	FrustumCulling(globalConst);
 }
 
 void Mesh::FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
+	m_meshConst.world = m_meshConst.world.Transpose();
 	m_meshConstBuffer->Update(context, sizeof(m_meshConst), 1, &m_meshConst);
 }
 
 void Mesh::Render(ComPtr<ID3D11DeviceContext>& context)
 {
+	if (!m_drawMe)
+		return;
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 	context->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -60,4 +64,20 @@ void Mesh::ReadImage(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& 
 	, const string& filePath, bool useSRGB)
 {
 	m_texture->ReadImage(device, context, filePath, useSRGB);
+}
+
+void Mesh::FrustumCulling(const GlobalConst globalConst)
+{
+	m_drawMe = false;
+	Matrix mvp = m_meshConst.world * globalConst.view * globalConst.proj;
+	for (auto& v : m_meshData.vertices)
+	{
+		Vector4 pos = Vector4(v.pos.x, v.pos.y, v.pos.z, 1.0f);
+		pos = Vector4::Transform(pos, mvp);
+		pos /= pos.w;
+		if (pos.x < -1 || pos.x > 1 || pos.y < -1 || pos.y > 1 || pos.z < -1 || pos.z > 1)
+			continue;
+		m_drawMe = true;
+		break;
+	}
 }

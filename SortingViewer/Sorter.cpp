@@ -28,7 +28,7 @@ void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& con
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::QUICK] = make_shared<QuickSort>();
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::HEAP] = make_shared<HeapSort>();
 	GenerateRandomElements(device, context);
-	m_vecMeshUpdateThread.resize(6);
+	m_vecMeshUpdateThread.resize(4);
 }
 
 void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
@@ -75,7 +75,8 @@ void Sorter::ChooseSortAlgorithm(SORT_TYPE sortType)
 	}
 }
 
-void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
+void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, const GlobalConst& globalConst
+	, float dt)
 {
 	static float time = 0;
 	static float animateTime = 0.01f;
@@ -121,15 +122,17 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 		int a = 1;
 	}
 	//for (auto& mesh : m_vecMeshes)
-	//	mesh->Update(dt);
+	//	mesh->Update(globalConst, dt);
+
 	for (int i = 0; i < m_vecMeshUpdateThread.size(); ++i)
 	{
 		int startIdx = m_vecMeshes.size() * i / m_vecMeshUpdateThread.size();
 		int finishIdx = m_vecMeshes.size() * (i + 1) / m_vecMeshUpdateThread.size();
-		m_vecMeshUpdateThread[i] = thread(&Sorter::MeshUpdate, this, dt, startIdx, finishIdx);
+		m_vecMeshUpdateThread[i] = thread(&Sorter::MeshUpdate, this, globalConst
+			, dt, startIdx, finishIdx);
 	}
 	
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < m_vecMeshUpdateThread.size(); ++i)
 		m_vecMeshUpdateThread[i].join();
 }
 
@@ -139,10 +142,11 @@ void Sorter::FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt)
 		mesh->FinalUpdate(context, dt);
 }
 
-void Sorter::MeshUpdate(float dt, UINT startIdx, UINT finishIdx)
+void Sorter::MeshUpdate(const GlobalConst& globalConst, float dt, UINT startIdx
+	, UINT finishIdx)
 {
 	for (int i = startIdx; i < finishIdx; ++i)
-		m_vecMeshes[i]->Update(dt);
+		m_vecMeshes[i]->Update(globalConst, dt);
 }
 
 void Sorter::Render(ComPtr<ID3D11DeviceContext>& context)

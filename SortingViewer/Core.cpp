@@ -77,9 +77,9 @@ void Core::Update()
 	if (KEYCHECK(SPACE, TAP))
 		m_sorter->GenerateRandomElements(m_device, m_context);
 		
-	m_sorter->Update(m_context, dt);
+	m_sorter->Update(m_context, m_globalConst, dt);
 
-	m_skyBox->Update(dt);
+	m_skyBox->Update(m_globalConst, dt);
 
 }
 
@@ -88,6 +88,9 @@ void Core::FinalUpdate()
 	static const float dt = 0.01f;
 	m_sorter->FinalUpdate(m_context, dt);
 	m_skyBox->FinalUpdate(m_context, dt);
+	m_globalConst.view = m_globalConst.view.Transpose();
+	m_globalConst.proj = m_globalConst.proj.Transpose();
+	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
 
 void Core::Render()
@@ -116,15 +119,12 @@ void Core::UpdateGlobalConst()
 {
 	m_globalConst.view = m_camera->GetViewRow();
 	m_globalConst.proj = m_camera->GetProjRow();
-	m_globalConst.view = m_globalConst.view.Transpose();
-	m_globalConst.proj = m_globalConst.proj.Transpose();
 }
 
 void Core::Progress()
 {
 	this->Update();
 	this->FinalUpdate();
-	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 	this->Render();
 	m_swapChain->Present(1, 0);
 }
