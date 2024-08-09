@@ -56,7 +56,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 		m_arrIBL[(UINT)IBL_TYPE::LUT].GetSRV()
 	};
 	m_context->PSSetShaderResources(10, 1, arrSRV.data());
-	Core::Update();
+
 }
 
 void Core::Update()
@@ -79,7 +79,15 @@ void Core::Update()
 		
 	m_sorter->Update(m_context, dt);
 
-	m_skyBox->Update(m_context, dt);
+	m_skyBox->Update(dt);
+
+}
+
+void Core::FinalUpdate()
+{
+	static const float dt = 0.01f;
+	m_sorter->FinalUpdate(m_context, dt);
+	m_skyBox->FinalUpdate(m_context, dt);
 }
 
 void Core::Render()
@@ -110,13 +118,13 @@ void Core::UpdateGlobalConst()
 	m_globalConst.proj = m_camera->GetProjRow();
 	m_globalConst.view = m_globalConst.view.Transpose();
 	m_globalConst.proj = m_globalConst.proj.Transpose();
-
-	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
 
 void Core::Progress()
 {
 	this->Update();
+	this->FinalUpdate();
+	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 	this->Render();
 	m_swapChain->Present(1, 0);
 }

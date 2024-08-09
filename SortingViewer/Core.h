@@ -15,6 +15,7 @@ public:
 	void Init(HWND hWnd, UINT width, UINT height);
 	void Progress();
 	void Update();
+	void FinalUpdate();
 	void Render();
 private:
 	void UpdateGlobalConst();

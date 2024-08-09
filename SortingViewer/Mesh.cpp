@@ -25,18 +25,19 @@ void Mesh::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& conte
 	m_texture = make_shared<Texture2D>();
 }
 
-void Mesh::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
+void Mesh::Update(float dt)
 {
-	static float time = 0.0f;
-	time += 0.01f;
 	m_meshConst.world =
 		Matrix::CreateScale(m_scale)
 		* Matrix::CreateRotationX(m_rotation.x)
 		* Matrix::CreateRotationY(m_rotation.y)
-		* Matrix::CreateRotationZ(m_rotation.z * time)
+		* Matrix::CreateRotationZ(m_rotation.z)
 		* Matrix::CreateTranslation(m_translation);
 	m_meshConst.world = m_meshConst.world.Transpose();
+}
 
+void Mesh::FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt)
+{
 	m_meshConstBuffer->Update(context, sizeof(m_meshConst), 1, &m_meshConst);
 }
 

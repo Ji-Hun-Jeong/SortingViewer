@@ -10,6 +10,15 @@
 #include "QuickSort.h"
 #include "HeapSort.h"
 
+Sorter::~Sorter()
+{
+	for (auto& thread : m_vecMeshUpdateThread)
+	{
+		if (thread.joinable())
+			thread.join();
+	}
+}
+
 void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)
 {
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::SELECT] = make_shared<SelectSort>();
@@ -19,6 +28,7 @@ void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& con
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::QUICK] = make_shared<QuickSort>();
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::HEAP] = make_shared<HeapSort>();
 	GenerateRandomElements(device, context);
+	m_vecMeshUpdateThread.resize(6);
 }
 
 void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
@@ -31,7 +41,7 @@ void Sorter::GenerateRandomElements(ComPtr<ID3D11Device>& device
 	random_device rd;
 	mt19937 gen(rd());
 	uniform_int_distribution<int> randomSize(300, 600);
-	uniform_real_distribution<float> randomHeight(0.01f, 5.0f);
+	uniform_real_distribution<float> randomHeight(0.01f, 1.0f);
 	m_vecMeshes.resize(randomSize(gen));
 
 	MeshData box = GeometryGenerator::MakeBox();
@@ -110,8 +120,29 @@ void Sorter::Update(ComPtr<ID3D11DeviceContext>& context, float dt)
 	{
 		int a = 1;
 	}
+	//for (auto& mesh : m_vecMeshes)
+	//	mesh->Update(dt);
+	for (int i = 0; i < m_vecMeshUpdateThread.size(); ++i)
+	{
+		int startIdx = m_vecMeshes.size() * i / m_vecMeshUpdateThread.size();
+		int finishIdx = m_vecMeshes.size() * (i + 1) / m_vecMeshUpdateThread.size();
+		m_vecMeshUpdateThread[i] = thread(&Sorter::MeshUpdate, this, dt, startIdx, finishIdx);
+	}
+	
+	for (int i = 0; i < 6; ++i)
+		m_vecMeshUpdateThread[i].join();
+}
+
+void Sorter::FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt)
+{
 	for (auto& mesh : m_vecMeshes)
-		mesh->Update(context, dt);
+		mesh->FinalUpdate(context, dt);
+}
+
+void Sorter::MeshUpdate(float dt, UINT startIdx, UINT finishIdx)
+{
+	for (int i = startIdx; i < finishIdx; ++i)
+		m_vecMeshes[i]->Update(dt);
 }
 
 void Sorter::Render(ComPtr<ID3D11DeviceContext>& context)
@@ -119,3 +150,4 @@ void Sorter::Render(ComPtr<ID3D11DeviceContext>& context)
 	for (auto& mesh : m_vecMeshes)
 		mesh->Render(context);
 }
+

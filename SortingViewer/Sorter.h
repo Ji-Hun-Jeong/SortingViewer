@@ -9,9 +9,12 @@ public:
 
 	void ChooseSortAlgorithm(SORT_TYPE sortType);
 	void Update(ComPtr<ID3D11DeviceContext>& context, float dt);
+	void FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt);
+	void MeshUpdate(float dt, UINT startIdx, UINT finishIdx);
 	void Render(ComPtr<ID3D11DeviceContext>& context);
 
 	float m_maxHeight = 0.0f;
+	virtual ~Sorter();
 private:
 	bool m_permitSort = false;
 	bool m_changeSortType = false;
@@ -21,5 +24,7 @@ private:
 	SORT_TYPE m_nextSortType = SORT_TYPE::SELECT;
 	SORT_TYPE m_sortType = SORT_TYPE::SELECT;
 
+
+	vector<thread> m_vecMeshUpdateThread;
 };
 
