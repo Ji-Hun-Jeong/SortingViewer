@@ -14,6 +14,7 @@ void InsertSort::StartSort(vector<shared_ptr<Mesh>>& vec)
 		{
 			if (vec[j + 1]->GetScale().y > vec[j]->GetScale().y)
 				break;
+
 			SwapMeshData(vec[j], vec[j + 1]);
 
 			if (m_destroy)

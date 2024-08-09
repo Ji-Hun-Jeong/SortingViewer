@@ -19,6 +19,7 @@
 #include <chrono>
 #include <mutex>
 #include <condition_variable>
+#include <algorithm>
 #include "Define.h"
 #include "Enum.h"
 
