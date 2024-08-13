@@ -24,9 +24,11 @@ private:
 	void CreateSorter(SORTMODE_TYPE sortType);
 
 private:
+	shared_ptr<Mesh> m_ground;
 	shared_ptr<Mesh> m_skyBox;
 	shared_ptr<Camera> m_camera;
 
+	SORTMODE_TYPE m_sortMode;
 	unique_ptr<Sorter> m_sorter;
 
 	GlobalConst m_globalConst;
@@ -34,6 +36,5 @@ private:
 
 	Texture2D m_arrIBL[(UINT)IBL_TYPE::END];
 
-	SORTMODE_TYPE m_sortMode;
 };
 

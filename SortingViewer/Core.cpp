@@ -36,6 +36,17 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 
 	CreateSorter(m_sortMode);
 
+	MeshData square = GeometryGenerator::MakeSquare();
+	m_ground = make_shared<Mesh>();
+	m_ground->Init(m_device, m_context, square);
+	m_ground->ReadImage(m_device, m_context, "Image/Ground.png", true);
+	m_ground->GetMeshConst().metallic = 0.99f;
+	m_ground->GetMeshConst().roughness = 0.46f;
+	m_ground->GetTrans().y = -1.0f;
+	m_ground->GetScale() = Vector3(100.0f);
+	m_ground->GetRotation().x = 90.0f * XM_PI / 180.0f;
+
+
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.001f, 100000.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
 
@@ -69,6 +80,9 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 void Core::UpdateGUI()
 {
 	ImGui::SliderFloat3("LightPos", &m_globalConst.light.pos.x, -100.0f, 100.0f);
+	ImGui::SliderFloat("Metallic", &m_ground->GetMeshConst().metallic, 0.0f, 1.0f);
+	ImGui::SliderFloat("Roughness", &m_ground->GetMeshConst().roughness, 0.0f, 1.0f);
+	ImGui::SliderFloat("SpotFactor", &m_globalConst.light.spotFactor, 0.0f, 10.0f);
 	ImGui::Text("Red is Standard, Blue And Green is Comparison, Matenta is Partition");
 	ImGui::Text("Button Space : Generate Random Element");
 	ImGui::Text("Button 1 : Select Sort");
@@ -119,6 +133,7 @@ void Core::Update(float dt)
 		
 	m_sorter->Update(m_context, m_globalConst, dt);
 
+	m_ground->Update(m_globalConst, dt);
 	m_skyBox->Update(m_globalConst, dt);
 
 }
@@ -127,6 +142,7 @@ void Core::FinalUpdate(float dt)
 {
 	m_sorter->FinalUpdate(m_context, dt);
 	m_skyBox->FinalUpdate(m_context, dt);
+	m_ground->FinalUpdate(m_context, dt);
 	m_camera->FinalUpdate(m_context, m_globalConst);
 	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
@@ -143,10 +159,10 @@ void Core::Render()
 
 	CoreBase::SetPSO(Graphics::basicSolidPSO);
 	m_sorter->Render(m_context);
+	m_ground->Render(m_context);
 
 	CoreBase::SetPSO(Graphics::skyBoxSolidPSO);
 	m_skyBox->Render(m_context);
-
 
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
@@ -158,6 +174,10 @@ void Core::Render()
 
 void Core::UpdateGlobalConst()
 {
+	static Vector3 lightFocusPos = Vector3(0.0f);
+	m_globalConst.light.lightDir = lightFocusPos - m_globalConst.light.pos;
+	m_globalConst.light.lightDir.Normalize();
+
 	m_camera->UpdateGlobalConst(m_globalConst);
 	
 	m_sorter->UpdateGlobalConst(m_globalConst);

@@ -15,6 +15,7 @@
 int Sorter::m_numOfElement = 10;
 int Sorter::m_elementGenerateMode = 0;
 
+vector<shared_ptr<Mesh>> Sorter::m_vecMeshes;
 std::array<unique_ptr<IElementGenerator>, 2> Sorter::m_arrElementGenerator =
 { make_unique<RandomElementGenerator>(), make_unique<WorstCaseElementGenerator>() };
 
@@ -36,8 +37,8 @@ void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& con
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::QUICK] = make_shared<QuickSort>("QuickSort");
 	m_arrSortAlgorithm[(UINT)SORT_TYPE::HEAP] = make_shared<HeapSort>("HeapSort");
 
-	GenerateElement(device, context);
 	m_vecMeshUpdateThread.resize(4);
+	this->GenerateElement(device, context);
 }
 
 void Sorter::GenerateElement(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)

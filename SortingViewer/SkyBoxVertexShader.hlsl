@@ -10,7 +10,9 @@ PSInput main(VSInput input)
     pos = mul(pos, proj);
     output.posProj = pos;
     
-    output.normal = input.normal;
+    float4 normal = float4(input.normal, 0.0f);
+    normal = mul(normal, worldIT);
+    output.normal = normalize(normal.xyz);
     output.uv = input.uv;
     return output;
 }

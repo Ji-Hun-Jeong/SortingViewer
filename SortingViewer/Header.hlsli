@@ -19,6 +19,10 @@ struct Light
     float fallOfStart;
     float3 strength;
     float fallOfEnd;
+    float3 lightDir;
+    float spotFactor;
+    Matrix lightView;
+    Matrix lightProj;
 };
 
 cbuffer GlobalConst : register(b0)
@@ -40,6 +44,7 @@ cbuffer GlobalConst : register(b0)
 cbuffer MeshConst : register(b1)
 {
     matrix world;
+    matrix worldIT;
     int stdElement;
     int cmpElement1;
     int cmpElement2;

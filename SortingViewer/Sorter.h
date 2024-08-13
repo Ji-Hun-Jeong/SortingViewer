@@ -38,7 +38,7 @@ protected:
 	bool m_changeSortType = false;
 	bool m_oneTimeFinishSort = false;
 
-	vector<shared_ptr<Mesh>> m_vecMeshes;
+	static vector<shared_ptr<Mesh>> m_vecMeshes;
 	shared_ptr<Sort> m_arrSortAlgorithm[(UINT)SORT_TYPE::END];
 	SORT_TYPE m_curPressSortType = SORT_TYPE::SELECT;
 	SORT_TYPE m_curSortType = SORT_TYPE::SELECT;

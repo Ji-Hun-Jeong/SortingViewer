@@ -34,12 +34,18 @@ void Mesh::Update(const GlobalConst globalConst, float dt)
 		* Matrix::CreateRotationY(m_rotation.y)
 		* Matrix::CreateRotationZ(m_rotation.z)
 		* Matrix::CreateTranslation(m_translation);
+
+	m_meshConst.worldIT = m_meshConst.world;
+	m_meshConst.worldIT.Translation(Vector3(0.0f));
+	m_meshConst.worldIT = m_meshConst.worldIT.Invert().Transpose();
+
 	FrustumCulling(globalConst);
 }
 
 void Mesh::FinalUpdate(ComPtr<ID3D11DeviceContext>& context, float dt)
 {
 	m_meshConst.world = m_meshConst.world.Transpose();
+	m_meshConst.worldIT = m_meshConst.worldIT.Transpose();
 	m_meshConstBuffer->Update(context, sizeof(m_meshConst), 1, &m_meshConst);
 }
 

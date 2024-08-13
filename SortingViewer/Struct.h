@@ -18,6 +18,8 @@ struct Light
 	float fallOfStart = 1.0f;
 	Vector3 strength;
 	float fallOfEnd = 100.0f;
+	Vector3 lightDir;
+	float spotFactor;
 	Matrix lightView;
 	Matrix lightProj;
 };
@@ -25,6 +27,7 @@ struct Light
 struct MeshConst
 {
 	Matrix world;
+	Matrix worldIT;
 	int stdElement = false;
 	int cmpElement1 = false;
 	int cmpElement2 = false;

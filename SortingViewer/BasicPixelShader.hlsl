@@ -13,6 +13,10 @@ float3 LerpColorByHeight(float3 color, float ratioHeight)
     }
     return color;
 }
+float CalcAttenuation(float dist)
+{
+    return saturate((dist - light.fallOfStart) / (light.fallOfEnd - light.fallOfStart));
+}
 float SpecularD(float ndoth, float roughness)
 {
     float aa = roughness * roughness * roughness * roughness;
@@ -37,12 +41,13 @@ float3 AmbientLighting(float3 albedo, float3 F0, float3 n, float3 v, float3 h, f
 , float roughness)
 {
     float3 diffuse = g_irradianceCube.SampleLevel(g_linearSampler, n, 0).rgb * (albedo - F0);
-    float3 specular = g_specularCube.SampleLevel(g_linearSampler, reflect(-v, n), 0).rgb * F0;
+    float3 specular = g_specularCube.SampleLevel(g_linearSampler, normalize(reflect(-v, n)), 0).rgb * F0;
     return (diffuse + specular);
 }
-float3 DirectLighting(float3 albedo, float3 F0, float3 n, float3 l, float3 v, float3 h
+float3 DirectLighting(float3 posWorld, float3 albedo, float3 F0, float3 n, float3 l, float3 v, float3 h
 , float metallic, float roughness)
 {
+    float3 pixelToLight = normalize(light.pos - posWorld);
     float ndoth = max(0.0f, dot(n, h));
     float ndotl = max(0.0f, dot(n, l));
     float ndotv = max(0.0f, dot(n, v));
@@ -53,15 +58,18 @@ float3 DirectLighting(float3 albedo, float3 F0, float3 n, float3 l, float3 v, fl
     
     float3 diffuse = albedo * (1.0f - F) / PI;
     float3 specular = D * F * G / max(1e-5, (4 * ndotl * ndotv));
-    return (diffuse + specular) * light.strength;
+    float lightAndPixelTheta = max(0.0f, dot(light.lightDir, -pixelToLight));
+    float dist = length(light.pos - posWorld);
+    float3 lightStrength = light.strength * pow(lightAndPixelTheta * CalcAttenuation(dist), light.spotFactor);
+    return (diffuse + specular) * lightStrength * ndotl;
 }
 float4 main(PSInput input) : SV_TARGET
 {
-    // 태양광이라고 가정
     float ratioWidth = input.posWorld.x / sumOfBoxWidth;
     float ratioHeight = input.posWorld.y / maxOfBoxHeight;
  
-    float3 albedo = 1.0f;
+    float3 albedo = g_texture.SampleLevel(g_linearSampler, input.uv, 0);
+    albedo = albedo ? albedo : 1.0f;
     
     float3 n = normalize(input.normal);
     float3 l = normalize(light.pos - input.posWorld.xyz);
@@ -74,7 +82,7 @@ float4 main(PSInput input) : SV_TARGET
     F0 = lerp(F0, albedo, metallic);
     
     float3 ambient = AmbientLighting(albedo, F0, n, v, h, metallic, roughness);
-    float3 direct = DirectLighting(albedo, F0, n, l, v, h, metallic, roughness);
+    float3 direct = DirectLighting(input.posWorld.xyz, albedo, F0, n, l, v, h, metallic, roughness);
     albedo = ambient + direct;
     
     if (stdElement)
