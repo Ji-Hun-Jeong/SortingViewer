@@ -1,5 +1,6 @@
 #include "Header.hlsli"
 Texture2D g_texture : register(t0);
+Texture2D g_shadowMap : register(t1);
 const static float PI = 3.141592f;
 float3 LerpColorByHeight(float3 color, float ratioHeight)
 {
@@ -41,9 +42,36 @@ float3 AmbientLighting(float3 albedo, float3 F0, float3 n, float3 v, float3 h, f
 , float roughness)
 {
     float3 diffuse = g_irradianceCube.SampleLevel(g_linearSampler, n, 0).rgb * (albedo - F0);
-    float3 specular = g_specularCube.SampleLevel(g_linearSampler, normalize(reflect(-v, n)), 0).rgb * F0;
+    float3 specular = g_specularCube.SampleLevel(g_linearSampler, normalize(reflect(-v, n)), 0).rgb;
+    float2 brdf = g_brdfTexture.SampleLevel(g_linearSampler, float2(dot(v, n), 1 - roughness), 0).rg;
+    specular *= brdf.r * F0 + brdf.g;
     return (diffuse + specular);
 }
+float2 ProjPosToUV(float3 projPos)
+{
+    float2 uv = projPos.xy;
+    uv = uv * float2(1.0f, -1.0f);  // [-1, 1], [-1, 1]
+    uv = uv + 1.0f;                 // [0, 2], [0, 2]
+    uv /= 2.0f;
+    return uv;
+}
+float GetShadowPower(float3 posWorld)
+{
+    float4 pos = float4(posWorld, 1.0f);
+    pos = mul(pos, light.lightView);
+    pos = mul(pos, light.lightProj);
+    float3 projPosByLightView = pos.xyz / pos.w; // [-1, 1], [1, -1] -> [0, 1], [0, 1]
+    if (projPosByLightView.x < -1 || projPosByLightView.x > 1 
+        || projPosByLightView.y < -1 || projPosByLightView.y > 1)
+        return 1.0f;
+    float2 uv = ProjPosToUV(projPosByLightView);
+    float minDepth = g_shadowMap.Sample(g_linearSampler, uv).r;
+    float shadowPower = 1.0f;
+    if (minDepth + 0.00001f < projPosByLightView.z)
+        shadowPower = 0.0f;
+    return shadowPower;
+}
+
 float3 DirectLighting(float3 posWorld, float3 albedo, float3 F0, float3 n, float3 l, float3 v, float3 h
 , float metallic, float roughness)
 {
@@ -61,7 +89,8 @@ float3 DirectLighting(float3 posWorld, float3 albedo, float3 F0, float3 n, float
     float lightAndPixelTheta = max(0.0f, dot(light.lightDir, -pixelToLight));
     float dist = length(light.pos - posWorld);
     float3 lightStrength = light.strength * pow(lightAndPixelTheta * CalcAttenuation(dist), light.spotFactor);
-    return (diffuse + specular) * lightStrength * ndotl;
+    float shadowPower = GetShadowPower(posWorld);
+    return (diffuse + specular) * lightStrength * ndotl * shadowPower;
 }
 float4 main(PSInput input) : SV_TARGET
 {

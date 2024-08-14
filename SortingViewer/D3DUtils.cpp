@@ -46,6 +46,25 @@ void D3DUtils::CreatePixelShader(ComPtr<ID3D11Device>& device, const wstring& ps
 		, shaderBlob->GetBufferSize(), nullptr, ps.GetAddressOf()));
 }
 
+void D3DUtils::CreateComputeShader(ComPtr<ID3D11Device>& device, const wstring& csPrefix, ComPtr<ID3D11ComputeShader>& cs)
+{
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+	flags |= D3DCOMPILE_DEBUG;
+#endif
+	wstring fileName = csPrefix + L"ComputeShader.hlsl";
+
+	ComPtr<ID3DBlob> shaderBlob;
+	ComPtr<ID3DBlob> errorBlob;
+
+	CHECKRESULT(D3DCompileFromFile(fileName.c_str(), nullptr
+		, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "cs_5_0",
+		flags, 0, shaderBlob.GetAddressOf(), errorBlob.GetAddressOf()));
+
+	CHECKRESULT(device->CreateComputeShader(shaderBlob->GetBufferPointer()
+		, shaderBlob->GetBufferSize(), nullptr, cs.GetAddressOf()));
+}
+
 void D3DUtils::CreateConstBuffer(ComPtr<ID3D11Device>& device
 	, UINT elementSize, ComPtr<ID3D11Buffer>& constBuffer)
 {

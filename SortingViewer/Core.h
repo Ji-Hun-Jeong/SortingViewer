@@ -36,5 +36,8 @@ private:
 
 	Texture2D m_arrIBL[(UINT)IBL_TYPE::END];
 
+	ComPtr<ID3D11Texture2D> m_lightViewDepthBuffer;
+	ComPtr<ID3D11DepthStencilView> m_lightViewDSV;
+	ComPtr<ID3D11ShaderResourceView> m_lightViewSRV;
 };
 

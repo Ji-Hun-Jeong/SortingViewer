@@ -21,8 +21,8 @@ struct Light
     float fallOfEnd;
     float3 lightDir;
     float spotFactor;
-    Matrix lightView;
-    Matrix lightProj;
+    matrix lightView;
+    matrix lightProj;
 };
 
 cbuffer GlobalConst : register(b0)

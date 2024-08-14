@@ -6,6 +6,7 @@ public:
 	static void CreateVertexShaderAndInputLayout(ComPtr<ID3D11Device>& device, const wstring& vsPrefix, ComPtr<ID3D11VertexShader>& vs,
 		const vector<D3D11_INPUT_ELEMENT_DESC>& desc, ComPtr<ID3D11InputLayout>& inputLayout);
 	static void CreatePixelShader(ComPtr<ID3D11Device>& device, const wstring& psPrefix, ComPtr<ID3D11PixelShader>& ps);
+	static void CreateComputeShader(ComPtr<ID3D11Device>& device, const wstring& csPrefix, ComPtr<ID3D11ComputeShader>& cs);
 
 	template <typename T_Vertex>
 	static void CreateVertexBuffer(ComPtr<ID3D11Device>& device, const vector<T_Vertex>& vertices

@@ -42,20 +42,20 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_ground->ReadImage(m_device, m_context, "Image/Ground.png", true);
 	m_ground->GetMeshConst().metallic = 0.99f;
 	m_ground->GetMeshConst().roughness = 0.46f;
-	m_ground->GetTrans().y = -1.0f;
+	//m_ground->GetTrans().y = -1.0f;
 	m_ground->GetScale() = Vector3(100.0f);
 	m_ground->GetRotation().x = 90.0f * XM_PI / 180.0f;
-
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.001f, 100000.0f);
 	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
 
 	m_context->VSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
+	m_context->CSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 	m_context->PSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 
-	m_arrIBL[(UINT)IBL_TYPE::SPECULAR].ReadDDSImage(m_device, L"Image/SkyBox/SunSetSpecularHDR.dds");
-	m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].ReadDDSImage(m_device, L"Image/SkyBox/SunSetDiffuseHDR.dds");
-	m_arrIBL[(UINT)IBL_TYPE::LUT].ReadDDSImage(m_device, L"Image/SkyBox/SunSetBrdf.dds");
+	m_arrIBL[(UINT)IBL_TYPE::SPECULAR].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29SpecularHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29DiffuseHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::LUT].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29Brdf.dds");
 
 	vector<ID3D11ShaderResourceView*> arrSRV =
 	{
@@ -63,10 +63,10 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 		m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].GetSRV(),
 		m_arrIBL[(UINT)IBL_TYPE::LUT].GetSRV()
 	};
-	m_context->PSSetShaderResources(10, 1, arrSRV.data());
+	m_context->PSSetShaderResources(10, UINT(arrSRV.size()), arrSRV.data());
 
 	m_globalConst.eyePos = m_camera->GetPos();
-	m_globalConst.light.pos = Vector3(0.0f, 50.0f, -1.0f);
+	m_globalConst.light.pos = Vector3(0.0f, 0.0f, -1.0f);
 	m_globalConst.light.strength = Vector3(1.0f);
 
 	m_globalConstBuffer = make_shared<ConstBuffer>();
@@ -74,8 +74,41 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 
 	m_context->VSSetConstantBuffers(0, 1, m_globalConstBuffer->GetBufferAddress());
 	m_context->PSSetConstantBuffers(0, 1, m_globalConstBuffer->GetBufferAddress());
-}
 
+	D3D11_TEXTURE2D_DESC desc;
+	ZeroMemory(&desc, sizeof(desc));
+	desc.Width = m_width;
+	desc.Height = m_height;
+	desc.MipLevels = desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R32_TYPELESS;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+	CHECKRESULT(m_device->CreateTexture2D(&desc, nullptr
+		, m_lightViewDepthBuffer.GetAddressOf()));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+	ZeroMemory(&dsvDesc, sizeof(dsvDesc));
+	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;  
+	dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+	CHECKRESULT(m_device->CreateDepthStencilView(m_lightViewDepthBuffer.Get(), &dsvDesc
+		, m_lightViewDSV.GetAddressOf()));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	srvDesc.Format = DXGI_FORMAT_R32_FLOAT;  // Shader resource view format
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	CHECKRESULT(m_device->CreateShaderResourceView(m_lightViewDepthBuffer.Get(), &srvDesc
+		, m_lightViewSRV.GetAddressOf()));
+
+	//m_context->PSSetShaderResources(1, 1, m_lightViewSRV.GetAddressOf());
+}
 
 void Core::UpdateGUI()
 {
@@ -144,6 +177,9 @@ void Core::FinalUpdate(float dt)
 	m_skyBox->FinalUpdate(m_context, dt);
 	m_ground->FinalUpdate(m_context, dt);
 	m_camera->FinalUpdate(m_context, m_globalConst);
+
+	m_globalConst.light.lightView = m_globalConst.light.lightView.Transpose();
+	m_globalConst.light.lightProj = m_globalConst.light.lightProj.Transpose();
 	m_globalConstBuffer->Update(m_context, sizeof(m_globalConst), 1, &m_globalConst);
 }
 
@@ -152,35 +188,49 @@ void Core::Render()
 	float clearColor[4] = { 0.3f,0.3f,1.0f,1.0f };
 	m_context->ClearRenderTargetView(m_msaaBuffer.GetRTV(), clearColor);
 	m_context->ClearDepthStencilView(m_dsv.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	m_context->OMSetRenderTargets(1, m_msaaBuffer.GetRTVAddress(), m_dsv.Get());
-
+	m_context->ClearDepthStencilView(m_lightViewDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	m_context->RSSetViewports(1, &m_viewPort);
-
+	m_context->OMSetRenderTargets(0, nullptr, m_lightViewDSV.Get());
+	// m_context->OMSetRenderTargets(1, m_resolveBuffer.GetRTVAddress(), m_lightViewDSV.Get());
+	
+	CoreBase::SetPSO(Graphics::depthOnlyPSO);
+	m_sorter->Render(m_context);
+	m_ground->Render(m_context);
+	
+	m_context->OMSetRenderTargets(1, m_msaaBuffer.GetRTVAddress(), m_dsv.Get());
+	m_context->PSSetShaderResources(1, 1, m_lightViewSRV.GetAddressOf());
 	CoreBase::SetPSO(Graphics::basicSolidPSO);
 	m_sorter->Render(m_context);
 	m_ground->Render(m_context);
-
+	
 	CoreBase::SetPSO(Graphics::skyBoxSolidPSO);
 	m_skyBox->Render(m_context);
-
+	
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	m_context->ResolveSubresource(m_resolveBuffer.GetTexture(), 0, m_msaaBuffer.GetTexture()
 		, 0, DXGI_FORMAT_R16G16B16A16_FLOAT);
-
+	
 	m_context->CopyResource(m_backBuffer.GetTexture(), m_resolveBuffer.GetTexture());
 }
 
 void Core::UpdateGlobalConst()
 {
-	static Vector3 lightFocusPos = Vector3(0.0f);
-	m_globalConst.light.lightDir = lightFocusPos - m_globalConst.light.pos;
-	m_globalConst.light.lightDir.Normalize();
-
 	m_camera->UpdateGlobalConst(m_globalConst);
 	
 	m_sorter->UpdateGlobalConst(m_globalConst);
+
+	static Vector3 lightFocusPos = Vector3(0.0f);
+	m_globalConst.light.lightDir = lightFocusPos - m_globalConst.light.pos;
+	m_globalConst.light.lightDir.Normalize();
+	Vector3 firstViewDir = Vector3{ 0.0f,0.0f,1.0f };
+
+	Quaternion rotation = Quaternion::FromToRotation(firstViewDir
+		, m_globalConst.light.lightDir);
+	m_globalConst.light.lightView = Matrix::CreateTranslation(-m_globalConst.light.pos)
+		* Matrix::CreateFromQuaternion(rotation).Invert();
+	m_globalConst.light.lightProj = m_globalConst.proj;
+
 }
 
 void Core::CreateSorter(SORTMODE_TYPE sortType)

@@ -19,7 +19,7 @@ struct Light
 	Vector3 strength;
 	float fallOfEnd = 100.0f;
 	Vector3 lightDir;
-	float spotFactor;
+	float spotFactor = 0.05f;
 	Matrix lightView;
 	Matrix lightProj;
 };

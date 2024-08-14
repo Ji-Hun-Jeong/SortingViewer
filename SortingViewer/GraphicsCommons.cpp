@@ -10,9 +10,13 @@ namespace Graphics
 
 	ComPtr<ID3D11VertexShader> basicVS;
 	ComPtr<ID3D11VertexShader> skyBoxVS;
+	ComPtr<ID3D11VertexShader> depthOnlyVS;
 
 	ComPtr<ID3D11PixelShader> basicPS;
 	ComPtr<ID3D11PixelShader> skyBoxPS;
+	ComPtr<ID3D11PixelShader> depthOnlyPS;
+
+	ComPtr<ID3D11ComputeShader> backBufferCS;
 
 	ComPtr<ID3D11RasterizerState> solidCWRS;
 	ComPtr<ID3D11RasterizerState> solidCCWRS;
@@ -21,6 +25,8 @@ namespace Graphics
 
 	GraphicsPSO basicSolidPSO;
 	GraphicsPSO skyBoxSolidPSO;
+	GraphicsPSO depthOnlyPSO;
+	GraphicsPSO csPSO;
 
 	void InitCommons(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)
 	{
@@ -53,16 +59,20 @@ namespace Graphics
 		};
 		D3DUtils::CreateVertexShaderAndInputLayout(device, L"Basic", basicVS, desc, basicInputLayout);
 		D3DUtils::CreateVertexShaderAndInputLayout(device, L"SkyBox", skyBoxVS, desc, basicInputLayout);
+		D3DUtils::CreateVertexShaderAndInputLayout(device, L"DepthOnly", depthOnlyVS, desc, basicInputLayout);
 
 		D3DUtils::CreatePixelShader(device, L"Basic", basicPS);
 		D3DUtils::CreatePixelShader(device, L"SkyBox", skyBoxPS);
+		D3DUtils::CreatePixelShader(device, L"DepthOnly", depthOnlyPS);
+
+		D3DUtils::CreateComputeShader(device, L"BackBuffer", backBufferCS);
 	}
 	void InitRasterizerState(ComPtr<ID3D11Device>& device)
 	{
 		D3D11_RASTERIZER_DESC desc;
 		ZeroMemory(&desc, sizeof(desc));
 		desc.FillMode = D3D11_FILL_SOLID;
-		desc.CullMode = D3D11_CULL_BACK;
+		desc.CullMode = D3D11_CULL_NONE;
 		desc.FrontCounterClockwise = false;
 		desc.DepthClipEnable = true;
 		desc.MultisampleEnable = true;
@@ -107,5 +117,11 @@ namespace Graphics
 		skyBoxSolidPSO.SetVS(skyBoxVS);
 		skyBoxSolidPSO.SetPS(skyBoxPS);
 		skyBoxSolidPSO.SetRS(solidCCWRS);
+
+		depthOnlyPSO = basicSolidPSO;
+		depthOnlyPSO.SetVS(depthOnlyVS);
+		depthOnlyPSO.SetPS(depthOnlyPS);
+
+		csPSO.SetCS(backBufferCS);
 	}
 }
