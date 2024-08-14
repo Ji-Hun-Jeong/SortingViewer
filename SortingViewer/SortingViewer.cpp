@@ -7,7 +7,7 @@
 #include "Core.h"
 
 #define MAX_LOADSTRING 100
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 // 전역 변수:
 HWND g_hWnd;
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
@@ -19,7 +19,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-Core g_core;
+unique_ptr<Core> g_core = make_unique<Core>();
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -58,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
-            g_core.Progress();
+            g_core->Progress();
         }
     }
 
@@ -118,7 +118,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
    ShowWindow(g_hWnd, nCmdShow);
-   g_core.Init(g_hWnd, 1280, 960);
+   g_core->Init(g_hWnd, 1280, 960);
    UpdateWindow(g_hWnd);
 
    return TRUE;
@@ -146,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return 0;
         UINT width = (UINT)LOWORD(lParam);
         UINT height = (UINT)HIWORD(lParam);
-        g_core.SetScreenSize(width, height); // Queue resize
+        g_core->SetScreenSize(width, height); // Queue resize
         return 0;
     }   
     case WM_SYSCOMMAND:
@@ -154,10 +154,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return 0;
         break;
     case WM_DESTROY:
+        exit(0);
         ::PostQuitMessage(0);
         return 0;
     }
-    return ::DefWindowProcW(hWnd, message, wParam, lParam);
+    return ::DefWindowProc(hWnd, message, wParam, lParam);
 }
 
 // 정보 대화 상자의 메시지 처리기입니다.

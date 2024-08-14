@@ -67,7 +67,7 @@ float GetShadowPower(float3 posWorld)
     float2 uv = ProjPosToUV(projPosByLightView);
     float minDepth = g_shadowMap.Sample(g_linearSampler, uv).r;
     float shadowPower = 1.0f;
-    if (minDepth + 0.00001f < projPosByLightView.z)
+    if (minDepth + 0.000001f < projPosByLightView.z)
         shadowPower = 0.0f;
     return shadowPower;
 }
@@ -88,7 +88,7 @@ float3 DirectLighting(float3 posWorld, float3 albedo, float3 F0, float3 n, float
     float3 specular = D * F * G / max(1e-5, (4 * ndotl * ndotv));
     float lightAndPixelTheta = max(0.0f, dot(light.lightDir, -pixelToLight));
     float dist = length(light.pos - posWorld);
-    float3 lightStrength = light.strength * pow(lightAndPixelTheta * CalcAttenuation(dist), light.spotFactor);
+    float3 lightStrength = light.strength * pow(lightAndPixelTheta * (1.0f - CalcAttenuation(dist)), light.spotFactor);
     float shadowPower = GetShadowPower(posWorld);
     return (diffuse + specular) * lightStrength * ndotl * shadowPower;
 }

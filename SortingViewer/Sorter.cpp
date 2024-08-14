@@ -26,6 +26,10 @@ Sorter::~Sorter()
 		if (thread.joinable())
 			thread.join();
 	}
+	for (auto& sort : m_arrSortAlgorithm)
+	{
+		sort.reset();
+	}
 }
 
 void Sorter::Init(ComPtr<ID3D11Device>& device, ComPtr<ID3D11DeviceContext>& context)

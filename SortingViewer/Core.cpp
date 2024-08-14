@@ -47,7 +47,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_ground->GetRotation().x = 90.0f * XM_PI / 180.0f;
 
 	m_camera = make_shared<Camera>(70.0f, float(m_width) / m_height, 0.001f, 100000.0f);
-	m_camera->SetPos(Vector3(0.0f, 0.0f, -1.0f));
+	m_camera->SetPos(Vector3(0.0f, 0.1f, -1.0f));
 
 	m_context->VSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 	m_context->CSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
@@ -66,7 +66,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_context->PSSetShaderResources(10, UINT(arrSRV.size()), arrSRV.data());
 
 	m_globalConst.eyePos = m_camera->GetPos();
-	m_globalConst.light.pos = Vector3(0.0f, 0.0f, -1.0f);
+	m_globalConst.light.pos = Vector3(-7.0f, 7.0f, -2.0f);
 	m_globalConst.light.strength = Vector3(1.0f);
 
 	m_globalConstBuffer = make_shared<ConstBuffer>();
@@ -263,4 +263,9 @@ void Core::Progress()
 	this->Render();
 
 	m_swapChain->Present(1, 0);
+}
+
+void Core::Destroy()
+{
+	m_sorter.reset();
 }

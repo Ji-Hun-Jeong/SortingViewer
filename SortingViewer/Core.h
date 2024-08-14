@@ -14,6 +14,7 @@ public:
 public:
 	void Init(HWND hWnd, UINT width, UINT height);
 	void Progress();
+	void Destroy();
 
 private:
 	void UpdateGUI();
