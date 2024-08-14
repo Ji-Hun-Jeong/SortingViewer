@@ -67,7 +67,7 @@ float GetShadowPower(float3 posWorld)
     float2 uv = ProjPosToUV(projPosByLightView);
     float minDepth = g_shadowMap.Sample(g_linearSampler, uv).r;
     float shadowPower = 1.0f;
-    if (minDepth + 0.000001f < projPosByLightView.z)
+    if (minDepth + 0.00001f < projPosByLightView.z)
         shadowPower = 0.0f;
     return shadowPower;
 }

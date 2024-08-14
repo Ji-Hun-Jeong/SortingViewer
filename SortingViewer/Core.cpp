@@ -53,9 +53,9 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_context->CSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 	m_context->PSSetSamplers(0, 1, Graphics::linearSampler.GetAddressOf());
 
-	m_arrIBL[(UINT)IBL_TYPE::SPECULAR].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29SpecularHDR.dds");
-	m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29DiffuseHDR.dds");
-	m_arrIBL[(UINT)IBL_TYPE::LUT].ReadDDSImage(m_device, L"Image/SkyBox/DaySky29Brdf.dds");
+	m_arrIBL[(UINT)IBL_TYPE::SPECULAR].ReadDDSImage(m_device, L"Image/SkyBox/SampleSpecularHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::IRRADIANCE].ReadDDSImage(m_device, L"Image/SkyBox/SampleDiffuseHDR.dds");
+	m_arrIBL[(UINT)IBL_TYPE::LUT].ReadDDSImage(m_device, L"Image/SkyBox/SampleBrdf.dds");
 
 	vector<ID3D11ShaderResourceView*> arrSRV =
 	{
@@ -66,7 +66,7 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 	m_context->PSSetShaderResources(10, UINT(arrSRV.size()), arrSRV.data());
 
 	m_globalConst.eyePos = m_camera->GetPos();
-	m_globalConst.light.pos = Vector3(-7.0f, 7.0f, -2.0f);
+	m_globalConst.light.pos = Vector3(-2.0f, 2.0f, -0.5f);
 	m_globalConst.light.strength = Vector3(1.0f);
 
 	m_globalConstBuffer = make_shared<ConstBuffer>();
@@ -106,24 +106,22 @@ void Core::Init(HWND hWnd, UINT width, UINT height)
 
 	CHECKRESULT(m_device->CreateShaderResourceView(m_lightViewDepthBuffer.Get(), &srvDesc
 		, m_lightViewSRV.GetAddressOf()));
-
-	//m_context->PSSetShaderResources(1, 1, m_lightViewSRV.GetAddressOf());
 }
 
 void Core::UpdateGUI()
 {
-	ImGui::SliderFloat3("LightPos", &m_globalConst.light.pos.x, -100.0f, 100.0f);
-	ImGui::SliderFloat("Metallic", &m_ground->GetMeshConst().metallic, 0.0f, 1.0f);
-	ImGui::SliderFloat("Roughness", &m_ground->GetMeshConst().roughness, 0.0f, 1.0f);
-	ImGui::SliderFloat("SpotFactor", &m_globalConst.light.spotFactor, 0.0f, 10.0f);
 	ImGui::Text("Red is Standard, Blue And Green is Comparison, Matenta is Partition");
 	ImGui::Text("Button Space : Generate Random Element");
+	ImGui::Text("Button F : Use(Not Use) Move");
+	ImGui::Text("Button W A S D Q E is Move");
 	ImGui::Text("Button 1 : Select Sort");
 	ImGui::Text("Button 2 : Bubble Sort");
 	ImGui::Text("Button 3 : Insert Sort");
 	ImGui::Text("Button 4 : Merge Sort");
 	ImGui::Text("Button 5 : Quick Sort");
 	ImGui::Text("Button 6 : Heap Sort");
+	
+	ImGui::Text("One More Tap Number Button -> Complete Immediately");
 	ImGui::SliderFloat("Camera Speed", &m_camera->m_speed, 1.0f, 20.0f);
 
 	static SORTMODE_TYPE prevMode = m_sortMode;
