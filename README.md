@@ -1,4 +1,13 @@
-# SortingViewer
+# SortingViewer  
+설치 
+=============
+1. git설치
+2. git clone https://github.com/Microsoft/vcpkg.git
+3. bat파일 실행 후 exe파일 실행, vcpkg 폴더에서 git cmd실행
+4. vcpkg install imgui[win32-binding,dx11-binding]:x64-windows     
+5. vcpkg install directxtk:x64-windows
+6. vcpkg install stb:x64-windows
+
 이용방법  
 =============
 > w a s d q e로 이동할 수 있다.  
